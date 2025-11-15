@@ -1,4 +1,12 @@
+using Microsoft.EntityFrameworkCore;
+using Software_Engineering_2025.Models;
+using Software_Engineering_2025.Data;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure SQLite Database
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

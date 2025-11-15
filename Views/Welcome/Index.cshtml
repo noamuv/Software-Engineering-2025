@@ -3,7 +3,7 @@
     ViewData["Title"] = "Welcome to Sensore";
 }
 
-// No layout for this welcome page
+<!-- No layout for this welcome page -->
 
 @{
     Layout = null;
@@ -62,28 +62,23 @@
 <h1>Welcome to Sensore</h1>
 
 <div class="user-grid">
-    <form asp-action="Patient" method="get">
-        <button type="submit" class="user-card">
+<!-- Each user type card as a form to submit the role -->
+<!-- a tag is used to navigate to Login controller with role parameter -->
+
+    <a asp-controller = "Login" asp-action="Index" asp-route-role= "Patient" class="user-card">
             <img src="/images/patient.png" alt="Patient" />
             <div>Patient</div>
-        </button>
-    </form>
-    <form asp-action="Clinician" method="get">
-        <button type="submit" class="user-card">
+    </a>
+    <a asp-controller= "Login" asp-action="Index" asp-route-role = "Clinician" class ="user-card">
             <img src="/images/clinician.png" alt="Clinician" />
-            <div>Clinician</div>
-        </button>
-    </form>
-    <form asp-action="Carer" method="get">
-        <button type="submit" class="user-card">
+            <div>Clinician</div>  
+    </a>
+    <a asp-controller = "Login" asp-action="Index" asp-route-role ="Carer" class="user-card">
             <img src="/images/carer.png" alt="Carer" />
             <div>Carer</div>
-        </button>
-    </form>
-    <form asp-action="Admin" method="get">
-        <button type="submit" class="user-card">
+    </a>
+    <a asp-action="Admin" method="get">
             <img src="/images/admin.png" alt="Admin" />
             <div>Admin</div>
-        </button>
-    </form>
+    </a>
 </div>
