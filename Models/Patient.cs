@@ -19,7 +19,7 @@ namespace Software_Engineering_2025.Models
         [StringLength(500)]
         public string? Notes { get; set; }
 
-        public Date? Date_of_Birth { get; set; }
+        public DateTime? Date_of_Birth { get; set; }
 
         // Navigation properties
         public virtual User? User { get; set; }

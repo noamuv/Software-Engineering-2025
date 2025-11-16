@@ -19,4 +19,3 @@ namespace Software_Engineering_2025.Models
         public virtual User? User { get; set; }  // Links back to User table
     }
 }
-}
