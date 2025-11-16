@@ -16,7 +16,9 @@ namespace Software_Engineering_2025.Data
         public DbSet<Admin> Admins { get; set; }
         public DbSet<Patient> Patients { get; set; }
         public DbSet<Clinician> Clinicians { get; set; }
+        public DbSet<Carer> Carers { get; set; }  
         public DbSet<Gender> Genders { get; set; }
+        public DbSet<CarerAccess> CarerAccesses { get; set; }
 
         // Need to add when teammates provide models:
         // public DbSet<PressureSession> PressureSessions { get; set; }
@@ -45,6 +47,13 @@ namespace Software_Engineering_2025.Data
                 .HasForeignKey<Admin>(a => a.User_ID)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // Configure Carer-User relationship (One-to-One)  ← ADD THIS
+            modelBuilder.Entity<Carer>()
+                .HasOne(c => c.User)
+                .WithOne()
+                .HasForeignKey<Carer>(c => c.User_ID)
+                .OnDelete(DeleteBehavior.Cascade);
+
             // Configure Patient-Clinician relationship (Many-to-One)
             modelBuilder.Entity<Patient>()
                 .HasOne(p => p.Clinician)
@@ -58,6 +67,34 @@ namespace Software_Engineering_2025.Data
                 .WithMany(g => g.Patients)
                 .HasForeignKey(p => p.Gender_ID)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            // Configure CarerAccess-Carer relationship (Many-to-One)  
+            modelBuilder.Entity<CarerAccess>()
+                .HasOne(ca => ca.CarerUser)
+                .WithMany()
+                .HasForeignKey(ca => ca.Carer_User_ID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Configure CarerAccess-Patient relationship (Many-to-One)
+            modelBuilder.Entity<CarerAccess>()
+                .HasOne(ca => ca.PatientUser)
+                .WithMany()
+                .HasForeignKey(ca => ca.Patient_User_ID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Configure CarerAccess-GrantedByUser relationship (Many-to-One)
+            modelBuilder.Entity<CarerAccess>()
+                .HasOne(ca => ca.GrantedByUser)
+                .WithMany()
+                .HasForeignKey(ca => ca.Granted_By_User_ID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Configure CarerAccess-RevokedByUser relationship (Many-to-One, optional)
+            modelBuilder.Entity<CarerAccess>()
+                .HasOne(ca => ca.RevokedByUser)
+                .WithMany()
+                .HasForeignKey(ca => ca.Revoked_By_User_ID)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Ensure Email is unique
             modelBuilder.Entity<User>()
@@ -83,6 +120,12 @@ namespace Software_Engineering_2025.Data
                     User_Type_ID = 3, 
                     Type_Name = "Patient", 
                     Description = "Patient user monitoring pressure data" 
+                },
+                new UserType  // OPTIONAL: Add Carer UserType
+                { 
+                    User_Type_ID = 4, 
+                    Type_Name = "Carer", 
+                    Description = "Authorized carer with access to patient data" 
                 }
             );
 
