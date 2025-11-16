@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Software_Engineering_2025.Models;
-using Software_Engineering_2025.Data;
+// using Software_Engineering_2025.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configure SQLite Database
+// Configure SQLite Database  
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -12,6 +12,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -21,17 +22,20 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+//These replace MapStaticAssets and WithStaticAssets
 app.UseHttpsRedirection();
-app.UseRouting();
-
+app.UseStaticFiles();
+app.UseRouting();   
 app.UseAuthorization();
 
-app.MapStaticAssets();
+
+//app.MapStaticAssets();  commented out because of error as i have migrated to .net 8
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Welcome}/{action=Index}/{id?}")
-    .WithStaticAssets();
+    pattern: "{controller=Welcome}/{action=Index}/{id?}");
+
+    // .WithStaticAssets(); commented out because of error as i have migrated to .net 8
 
 
 app.Run();
