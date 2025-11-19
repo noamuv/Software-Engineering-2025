@@ -1,0 +1,334 @@
+/* Admin Page Styles - Sensore Theme */
+
+:root { 
+    --primary-purple: #7C3AED;
+    --primary-cyan: #06B6D4;
+    --light-gray: #E5E7EB;
+    --dark-text: #1F2937;
+    --white: #FFFFFF;
+    --success-green: #10B981;
+    --danger-red: #EF4444;
+    --warning-orange: #F59E0B;
+}
+
+body {
+    background-color: #F9FAFB;
+    color: var(--dark-text);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Page Headers */
+.page-title {
+    color: var(--primary-cyan);
+    font-size: 2.5rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 2rem;
+    margin-top: 2rem;
+}
+
+/* Cards/Containers - Used for form containers and content sections*/
+
+/* Standard card for forms */ 
+.admin-card {
+    background: var(--white);
+    border: 2px solid var(--primary-purple);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 2rem auto;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(124, 58, 237, 0.1);
+}
+
+/* Wide card - for tables and dashboards (max-width: 1200px) */
+.admin-card-wide {
+    background: var(--white);
+    border: 2px solid var(--primary-purple);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 2rem auto;
+    max-width: 1200px;
+    box-shadow: 0 4px 6px rgba(124, 58, 237, 0.1);
+}
+/* Form Styles - Used in create user form */
+
+.form-label {
+    color: var(--dark-text);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+/* Text input fields */
+.form-control {
+    background-color: var(--light-gray);
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem;
+    width: 100%;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+/* Input focus state - adds purple border */
+.form-control:focus {
+    background-color: var(--light-gray);
+    border: 2px solid var(--primary-purple);
+    outline: none;
+}
+
+/* Dropdown select fields */
+.form-select {
+    background-color: var(--light-gray);
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem;
+    width: 100%;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+/* Select focus state */
+.form-select:focus {
+    background-color: var(--light-gray);
+    border: 2px solid var(--primary-purple);
+    outline: none;
+}
+
+/* Buttons */
+
+/* Primary button - used for main actions (create, submit) */
+.btn-primary-custom {
+    background-color: var(--primary-purple);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    font-size: 1rem;
+}
+
+/* Primary button hover effect */
+.btn-primary-custom:hover {
+    background-color: #6D28D9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+}
+
+/* Danger button - used for disable actions */
+.btn-danger-custom {
+    background-color: var(--danger-red);
+    color: var(--white);
+    border: none;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* Danger button hover effect */
+.btn-danger-custom:hover {
+    background-color: #DC2626;
+}
+
+/* Success button - used for enable actions */
+.btn-success-custom {
+    background-color: var(--success-green);
+    color: var(--white);
+    border: none;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* Success button hover effect */
+.btn-success-custom:hover {
+    background-color: #059669;
+}
+
+/* Small button modifier */
+.btn-sm {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+}
+
+/* Dashboard Cards - Clickable cards on Admin dashboard */
+.dashboard-card {
+    background: var(--white);
+    border: 2px solid var(--primary-purple);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+    color: var(--dark-text);
+}
+
+/* Dashboard card hover effect - lifts up */
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(124, 58, 237, 0.2);
+    text-decoration: none;
+}
+
+/* Dashboard card icons */
+.dashboard-card i {
+    font-size: 3rem;
+    color: var(--primary-purple);
+    margin-bottom: 1rem;
+}
+/* Dashboard card headings */
+.dashboard-card h4 {
+    color: var(--primary-purple);
+    font-weight: 600;
+    margin-top: 1rem;
+}
+
+/* Status Badges - Used in manage users table*/
+
+/* Active status badge - green */
+.badge-active {
+    background-color: var(--success-green);
+    color: var(--white);
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+/* Disabled status badge - gray */
+.badge-disabled {
+    background-color: #9CA3AF;
+    color: var(--white);
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+/* Tables - User management table styling  */
+.users-table {
+    width: 100%;
+    background: var(--white);
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 2px solid var(--primary-purple);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* Table header - purple background */
+.users-table thead {
+    background-color: var(--primary-purple);
+    color: var(--white);
+}
+
+/* Table header cells */
+.users-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+}
+
+/* Table body cells */
+.users-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--light-gray);
+}
+
+/* Remove border from last row */
+.users-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Table row hover effect */
+.users-table tbody tr:hover {
+    background-color: #F9FAFB;
+}
+
+/* Alert Messages - Success, error, and info notifications*/
+
+/* Success alert - shown after successful operations */
+.alert-success-custom {
+    background-color: #D1FAE5;
+    color: #065F46;
+    border: 2px solid var(--success-green);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    display: none; /* Hidden by default, shown via JavaScript */
+}
+
+/* Error alert - shown when operations fail */
+.alert-danger-custom {
+    background-color: #FEE2E2;
+    color: #991B1B;
+    border: 2px solid var(--danger-red);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    display: none; /* Hidden by default, shown via JavaScript */
+}
+
+/* Info alert - shown for informational messages */
+.alert-info-custom {
+    background-color: #DBEAFE;
+    color: #1E40AF;
+    border: 2px solid var(--primary-cyan);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Loading Spinner - Shown while fetching data from API*/
+
+.spinner-border-custom {
+    width: 2rem;
+    height: 2rem;
+    border: 0.3rem solid var(--light-gray);
+    border-right-color: var(--primary-purple);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* Spinner rotation animation */
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+/* Utility classes*/
+
+/* Required field indicator */
+.required {
+    color: var(--danger-red);
+}
+
+/* Navigation - Admin section navigation bar*/
+
+.admin-nav {
+    background-color: var(--primary-purple);
+    padding: 1rem;
+    margin-bottom: 2rem;
+}
+
+/* Navigation links */
+.admin-nav a {
+    color: var(--white);
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    margin: 0 0.5rem;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+}
+
+/* Navigation link hover effect */
+.admin-nav a:hover {
+    background-color: #6D28D9;
+}
