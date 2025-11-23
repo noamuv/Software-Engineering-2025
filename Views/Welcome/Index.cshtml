@@ -42,6 +42,8 @@
         cursor: pointer;
         transition: all 0.2s ease;
         box-shadow: 0px 0px 10px rgba(0,0,0,0.05);
+        text-decoration: none;
+        color: #333;
     }
 
     .user-card:hover {
@@ -63,22 +65,23 @@
 
 <div class="user-grid">
 <!-- Each user type card as a form to submit the role -->
-<!-- a tag is used to navigate to Login controller with role parameter -->
+<!-- a tag is used to navigate to Auth controller with role parameter -->
 
-    <a asp-controller = "Login" asp-action="Index" asp-route-role= "Patient" class="user-card">
+    <a asp-controller = "Auth" asp-action="SignIn" asp-route-role= "Patient" class="user-card">
             <img src="/images/patient.png" alt="Patient" />
             <div>Patient</div>
     </a>
-    <a asp-controller= "Login" asp-action="Index" asp-route-role = "Clinician" class ="user-card">
+    <a asp-controller= "Auth" asp-action="SignIn" asp-route-role = "Clinician" class ="user-card">
             <img src="/images/clinician.png" alt="Clinician" />
             <div>Clinician</div>  
     </a>
-    <a asp-controller = "Login" asp-action="Index" asp-route-role ="Carer" class="user-card">
+    <a asp-controller = "Auth" asp-action="SignIn" asp-route-role ="Carer" class="user-card">
             <img src="/images/carer.png" alt="Carer" />
             <div>Carer</div>
     </a>
-    <a asp-action="Admin" method="get">
+    <a  asp-controller="Auth" asp-action="SignIn" asp-route-role="Admin" class="user-card">
             <img src="/images/admin.png" alt="Admin" />
             <div>Admin</div>
     </a>
+    
 </div>

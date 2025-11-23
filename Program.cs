@@ -1,8 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using Software_Engineering_2025.Models;
-// using Software_Engineering_2025.Data;
+using Software_Engineering_2025.Data;
+using Software_Engineering_2025.Services;  
+
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container
+builder.Services.AddControllersWithViews();
 
 // Configure SQLite Database  
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -11,7 +16,13 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+// Dependency injection for services
+builder.Services.AddScoped<PasswordValidator>();
+builder.Services.AddScoped<AuthenticationService>();
+
 var app = builder.Build();
+
+
 
 
 // Configure the HTTP request pipeline.

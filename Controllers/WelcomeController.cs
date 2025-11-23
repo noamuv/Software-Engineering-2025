@@ -14,9 +14,11 @@ namespace Software_Engineering_2025.Controllers
             return View();
             // Returns the default view associated with this action method.
         }
+        /*  The following methods redirect to the Login controller's Index action.
         public IActionResult Patient()   => RedirectToAction("Index", "Login");
         public IActionResult Clinician() => RedirectToAction("Index", "Login");
         public IActionResult Carer()     => RedirectToAction("Index", "Login");
         public IActionResult Admin()     => RedirectToAction("Index", "Login");
+        */
     }
 }

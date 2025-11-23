@@ -1,0 +1,165 @@
+@{
+    Layout = null;
+    var role = ViewBag.Role ?? "User";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>First Time Sign In - @role</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f7f7ff;
+            margin: 0;
+            padding: 20px;
+        }
+        .signin-container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        .back-link {
+            color: #5d3fd3;
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        h2 {
+            color: #5d3fd3;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #5d3fd3;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        button:hover {
+            background-color: #4a2fb0;
+        }
+        .error {
+            background-color: #ffe6e6;
+            color: #cc0000;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .divider {
+            text-align: center;
+            margin: 25px 0;
+            position: relative;
+        }
+        .divider::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 50%;
+            height: 1px;
+            background-color: #ddd;
+        }
+        .divider span {
+            background-color: white;
+            padding: 0 15px;
+            position: relative;
+            color: #666;
+            font-size: 14px;
+        }
+        .switch-link {
+            text-align: center;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+        }
+        .switch-link p {
+            margin: 0 0 10px 0;
+            color: #666;
+            font-size: 14px;
+        }
+        .switch-link a {
+            color: #5d3fd3;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+        }
+        .switch-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="signin-container">
+        <a asp-controller="Welcome" asp-action="Index" class="back-link">← Back to Welcome</a>
+        
+        <h2>First Time Sign In</h2>
+        <p class="subtitle">@role - Use the temporary password provided by in your registration email</p>
+        
+        @if (ViewBag.Error != null)
+        {
+            <div class="error">@ViewBag.Error</div>
+        }
+        
+        <form method="post">
+            <input type="hidden" name="role" value="@role" />
+            
+            <label>Email Address</label>
+            <input type="email" name="email" placeholder="your.email@example.com" required autofocus />
+            
+            <label>Temporary Password</label>
+            <input type="password" name="temporaryPassword" placeholder="Enter temporary password" required />
+            
+            <button type="submit">Continue to Set Password</button>
+        </form>
+
+        <div class="divider">
+            <span>OR</span>
+        </div>
+
+        <div class="switch-link">
+            <p>Already set your password?</p>
+            <a asp-controller="Auth" asp-action="Login" asp-route-role="@role">Login with your password →</a>
+        </div>
+    </div>
+</body>
+</html>
