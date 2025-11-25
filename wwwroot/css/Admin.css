@@ -331,4 +331,104 @@ body {
 /* Navigation link hover effect */
 .admin-nav a:hover {
     background-color: #6D28D9;
+
+    /* Statisitics cards
+   Dashboard statistics display*/
+
+/* Base stat card styling */
+.stat-card {
+    background: var(--white);
+    border: 2px solid var(--primary-purple);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(124, 58, 237, 0.15);
+}
+
+/* Stat card icon section */
+.stat-icon {
+    font-size: 2.5rem;
+    color: var(--primary-purple);
+    min-width: 60px;
+    text-align: center;
+}
+
+/* Stat card content section */
+.stat-content {
+    flex: 1;
+}
+
+.stat-content h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--dark-text);
+    margin: 0;
+    line-height: 1;
+}
+
+.stat-content p {
+    font-size: 0.9rem;
+    color: #6B7280;
+    margin: 0.25rem 0 0 0;
+    font-weight: 500;
+}
+
+/* Color variants for different stat types */
+.stat-card-primary {
+    border-color: var(--primary-purple);
+    background: linear-gradient(135deg, #FFFFFF 0%, #F3E8FF 100%);
+}
+
+.stat-card-primary .stat-icon {
+    color: var(--primary-purple);
+}
+
+.stat-card-success {
+    border-color: var(--success-green);
+    background: linear-gradient(135deg, #FFFFFF 0%, #D1FAE5 100%);
+}
+
+.stat-card-success .stat-icon {
+    color: var(--success-green);
+}
+
+.stat-card-warning {
+    border-color: var(--warning-orange);
+    background: linear-gradient(135deg, #FFFFFF 0%, #FEF3C7 100%);
+}
+
+.stat-card-warning .stat-icon {
+    color: var(--warning-orange);
+}
+
+.stat-card-info {
+    border-color: var(--primary-cyan);
+    background: linear-gradient(135deg, #FFFFFF 0%, #DBEAFE 100%);
+}
+
+.stat-card-info .stat-icon {
+    color: var(--primary-cyan);
+}
+
+.stat-card-secondary {
+    border-color: #9CA3AF;
+    background: linear-gradient(135deg, #FFFFFF 0%, #F3F4F6 100%);
+}
+
+.stat-card-secondary .stat-icon {
+    color: #6B7280;
+}
+
+/* Loading state for statistics */
+.stat-content h3.loading {
+    color: #D1D5DB;
+}
 }
