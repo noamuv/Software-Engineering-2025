@@ -52,7 +52,7 @@ document.getElementById('createUserForm')?.addEventListener('submit', async func
             // Scroll to top to see success message
             window.scrollTo({ top: 0, behavior: 'smooth' });
         } else {
-            // Error from server (eg, duplicate email)
+            // Error from server (e.g., duplicate email)
             showError(data.message || 'Failed to create user');
         }
         
@@ -204,7 +204,7 @@ async function enableUser(userId) {
 }
 
 /**
- * Displays success message alert
+ * Shows success message alert
  * @param {string} message - Success message to display
  */
 function showSuccess(message) {
@@ -241,7 +241,46 @@ function showError(message) {
     }
 }
 
+/**
+ * Loads dashboard statistics
+ * Called when admin dashboard loads
+ * Fetches user counts by type and status for dashboard display
+ */
+async function loadDashboardStats() {
+    // Check if we're on the dashboard page
+    if (!document.getElementById('totalUsers')) return;
+    
+    try {
+        // Fetch statistics from API
+        const response = await fetch(`${API_BASE_URL}/statistics`);
+        const stats = await response.json();
+        
+        if (response.ok) {
+            // Update all stat cards with data
+            document.getElementById('totalUsers').textContent = stats.totalUsers;
+            document.getElementById('activeUsers').textContent = stats.activeUsers;
+            document.getElementById('disabledUsers').textContent = stats.disabledUsers;
+            document.getElementById('totalAdmins').textContent = stats.totalAdmins;
+            document.getElementById('totalClinicians').textContent = stats.totalClinicians;
+            document.getElementById('totalPatients').textContent = stats.totalPatients;
+            document.getElementById('totalCarers').textContent = stats.totalCarers;
+        } else {
+            console.error('Failed to load statistics');
+            // Keep showing "-" if loading fails
+        }
+        
+    } catch (error) {
+        console.error('Error loading statistics:', error);
+        // Silently fail - dashboard still usable without stats
+    }
+}
+
 // Auto-load users when manage users page loads
 if (document.getElementById('usersTableBody')) {
     loadUsers();
+}
+
+// Auto-load statistics when dashboard page loads
+if (document.getElementById('totalUsers')) {
+    loadDashboardStats();
 }
