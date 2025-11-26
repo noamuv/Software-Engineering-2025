@@ -22,8 +22,14 @@ builder.Services.AddScoped<AuthenticationService>();
 
 var app = builder.Build();
 
-
-
+/* THIS SECTION SEEDS THE DATABASE 
+  using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    context.Database.Migrate();
+    DatabaseSeeder.Seed(context);  // THIS LINE MUST BE HERE!
+}
+*/
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

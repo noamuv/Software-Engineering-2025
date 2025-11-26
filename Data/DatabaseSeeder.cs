@@ -2,10 +2,13 @@ using Software_Engineering_2025.Models;
 using System;
 using System.Linq;
 
+// Seed initial data into the database
 namespace Software_Engineering_2025.Data
 {
+    // Static class to handle database seeding
     public static class DatabaseSeeder
     {
+        // Method to seed initial users into the database
         public static void Seed(ApplicationDbContext context)
         {
             // If any users already exist, don't reseed
