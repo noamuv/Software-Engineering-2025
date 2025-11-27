@@ -4,7 +4,11 @@ namespace Software_Engineering_2025.Services
     {
         // Validates password strength
         public ValidationResult ValidatePasswordStrength(string password)
-        {
+           {
+              /* Checks for password strength to ensure security.
+               Criteria include length, uppercase, lowercase, digit, and special character.
+            */
+
             if (string.IsNullOrEmpty(password))
                 return ValidationResult.Fail("Password cannot be empty.");
 
@@ -26,28 +30,32 @@ namespace Software_Engineering_2025.Services
             return ValidationResult.Success();
         }
 
-        // Validates that passwords match
+            /* Validates that passwords match
+            Used during password reset to ensure user input consistency.
+            */
         public ValidationResult ValidatePasswordsMatch(string password, string confirmPassword)
-        {
+            {
             if (password != confirmPassword)
                 return ValidationResult.Fail("Passwords do not match.");
 
-            return ValidationResult.Success();
-        }
-    }
+             // Passwords match
+             return ValidationResult.Success();
+            }
+          }
 
-    // Simple result class to hold validation outcome
-    public class ValidationResult
-    {
-        public bool IsValid { get; set; }
-        public string ErrorMessage { get; set; } = string.Empty;
+           // Result class for password validation
+           // Used to indicate success or failure of validation checks
+        public class ValidationResult
+           {
+           public bool IsValid { get; set; }
+           public string ErrorMessage { get; set; } = string.Empty;
 
-        public static ValidationResult Success() => new ValidationResult { IsValid = true };
+           public static ValidationResult Success() => new ValidationResult { IsValid = true };
         
-        public static ValidationResult Fail(string message) => new ValidationResult 
-        { 
+           public static ValidationResult Fail(string message) => new ValidationResult 
+           { 
             IsValid = false, 
             ErrorMessage = message 
-        };
-    }
-}
+          };
+        }
+      }

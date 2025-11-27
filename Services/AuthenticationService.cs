@@ -13,7 +13,7 @@ namespace Software_Engineering_2025.Services
     // Constructor to initialize dependencies
         public AuthenticationService(ApplicationDbContext context, PasswordValidator passwordValidator)
         {
-            // Initialize dependencies
+            // Injected database context and password validator
             _context = context;
             _passwordValidator = passwordValidator;
         }
@@ -21,9 +21,10 @@ namespace Software_Engineering_2025.Services
         // SIGN IN Authenticates user with temporary password
         public AuthenticationResult AuthenticateWithTemporaryPassword(string email, string temporaryPassword)
         {
-            // Find user
+            // Find user through their email in the database
             var user = _context.AppUsers.SingleOrDefault(u => u.Email == email);
 
+            // If user not found, return failure
             if (user == null)
                 return AuthenticationResult.Fail("Account was not found.");
 
@@ -39,25 +40,26 @@ namespace Software_Engineering_2025.Services
         }
 
         // LOGIN - Authenticate with Regular Password (Returning Users)
-public AuthenticationResult AuthenticateWithPassword(string email, string password)
-{
-    var user = _context.AppUsers.SingleOrDefault(u => u.Email == email);
+         public AuthenticationResult AuthenticateWithPassword(string email, string password)
+       {
+         var user = _context.AppUsers.SingleOrDefault(u => u.Email == email);
 
-    if (user == null)
+           if (user == null)
+            return AuthenticationResult.Fail("Invalid email or password.");
+
+        // Check if user still needs to sign in for first time
+           if (user.RequiresPasswordReset)
+           return AuthenticationResult.Fail("Please use the 'First Time Sign In' option to set your password.");
+
+         // Verify password
+        if (string.IsNullOrEmpty(user.PasswordHash) || !VerifyPassword(password, user.PasswordHash))
         return AuthenticationResult.Fail("Invalid email or password.");
 
-    // Check if user still needs to sign in for first time
-    if (user.RequiresPasswordReset)
-        return AuthenticationResult.Fail("Please use the 'First Time Sign In' option to set your password.");
+       // Successful authentication
+        return AuthenticationResult.Success(user);
+       }
 
-    // Verify password
-    if (string.IsNullOrEmpty(user.PasswordHash) || !VerifyPassword(password, user.PasswordHash))
-        return AuthenticationResult.Fail("Invalid email or password.");
-
-    return AuthenticationResult.Success(user);
-}
-
-        // Resets user password
+        // RESET user password
         public AuthenticationResult ResetPassword(Guid userId, string newPassword, string confirmPassword)
         {
             // Find user
@@ -77,10 +79,12 @@ public AuthenticationResult AuthenticateWithPassword(string email, string passwo
                 return AuthenticationResult.Fail(strengthResult.ErrorMessage);
 
             // Update user password and remove temporary password
-            user.PasswordHash = newPassword;
+            user.PasswordHash = HashPassword(newPassword);
             user.TemporaryPassword = null;
             user.RequiresPasswordReset = false;
 
+
+            // Save changes to database
             _context.SaveChanges();
 
             return AuthenticationResult.Success(user);
@@ -89,27 +93,25 @@ public AuthenticationResult AuthenticateWithPassword(string email, string passwo
         // Hash password
         private string HashPassword(string password)
         {
-            // Hashing logic to be implemented using BCrypt.Net-Next
-            //dotnet ef database drop --forcereturn BCrypt.Net.BCrypt.HashPassword(password);
-            return password; // Temporary
+            return BCrypt.Net.BCrypt.HashPassword(password, workFactor: 12);
         }
 
         // Verify password hash (placeholder)
         private bool VerifyPassword(string password, string hash)
-        {
-            // TODO: Use BCrypt.Net-Next
-            // return BCrypt.Net.BCrypt.Verify(password, hash);
-            return password == hash; // Temporary
+         {
+            // BCrypt automatically handles the salt that's stored in the hash
+            return BCrypt.Net.BCrypt.Verify(password, hash);
         }
-    }
+     }
 
-    // Result class for authentication operations
-    public class AuthenticationResult
-    {
+         // Result class for authentication operations
+        public class AuthenticationResult
+        {
         public bool IsSuccessful { get; set; }
         public string ErrorMessage { get; set; } = string.Empty;
         public AppUser? User { get; set; }
-
+        
+        // Factory methods for success and failure results
         public static AuthenticationResult Success(AppUser user) => new AuthenticationResult
         {
             IsSuccessful = true,
@@ -120,6 +122,6 @@ public AuthenticationResult AuthenticateWithPassword(string email, string passwo
         {
             IsSuccessful = false,
             ErrorMessage = message
-        };
-    }
-}
+           };
+         }
+       }

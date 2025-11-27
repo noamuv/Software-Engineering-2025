@@ -137,12 +137,15 @@
     </style>
 </head>
 <body>
+
+    <!-- Login Form Container -->
     <div class="login-container">
         <a asp-controller="Welcome" asp-action="Index" class="back-link">← Back to Welcome</a>
         
         <h2>Welcome Back</h2>
         <p class="subtitle">@role Login</p>
         
+        <!-- Display success message if exists -->
         @if (TempData["SuccessMessage"] != null)
         {
             <div class="success">@TempData["SuccessMessage"]</div>
@@ -153,6 +156,7 @@
             <div class="error">@ViewBag.Error</div>
         }
         
+        <!-- Login Form -->
         <form method="post">
             <input type="hidden" name="role" value="@role" />
             

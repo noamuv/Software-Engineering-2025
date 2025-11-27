@@ -1,8 +1,6 @@
-
 using Microsoft.AspNetCore.Mvc;
 using Software_Engineering_2025.Services;
 using System;
-
 
 // This controller manages user authentication, including sign-in for first-time users,
 // login for returning users, password resets, and logout functionality.
@@ -23,9 +21,9 @@ namespace Software_Engineering_2025.Controllers
             _authService = authService;
         }
 
-        // ============================================
+    
         // SIGN IN - First Time Users (Temporary Password)
-        // ============================================
+    
         
         [HttpGet]
         public IActionResult SignIn(string? role)
@@ -54,9 +52,7 @@ namespace Software_Engineering_2025.Controllers
             return RedirectToAction("ResetPassword", new { userId = result.User!.Id });
         }
 
-        // ============================================
-        // LOGIN - Returning Users (Regular Password)
-        // ============================================
+        // LOGIN - Returning Users (Signing in with Regular Password)
         
         [HttpGet]
         public IActionResult Login(string? role)
@@ -68,22 +64,22 @@ namespace Software_Engineering_2025.Controllers
         [HttpPost]
         public IActionResult Login(string email, string password, string? role)
         {
-            var result = _authService.AuthenticateWithPassword(email, password);
+            var ptest_result = _authService.AuthenticateWithPassword(email, password);
 
-            if (!result.IsSuccessful)
+            if (!ptest_result.IsSuccessful)
             {
                 ViewBag.Role = role ?? "User";
-                ViewBag.Error = result.ErrorMessage;
+                ViewBag.Error = ptest_result.ErrorMessage;
                 return View();
             }
 
             // Redirect to appropriate dashboard based on role
-            return RedirectToDashboard(result.User!.Role);
+            return RedirectToDashboard(ptest_result.User!.Role);
         }
 
-        // ============================================
+   
         // RESET PASSWORD - After First Sign In
-        // ============================================
+     
         
         [HttpGet]
         public IActionResult ResetPassword(Guid userId)
@@ -95,12 +91,12 @@ namespace Software_Engineering_2025.Controllers
         [HttpPost]
         public IActionResult ResetPassword(Guid userId, string newPassword, string confirmPassword)
         {
-            var result = _authService.ResetPassword(userId, newPassword, confirmPassword);
+            var ptest_result = _authService.ResetPassword(userId, newPassword, confirmPassword);
 
-            if (!result.IsSuccessful)
+            if (!ptest_result.IsSuccessful)
             {
                 ViewBag.UserId = userId;
-                ViewBag.Error = result.ErrorMessage;
+                ViewBag.Error = ptest_result.ErrorMessage;
                 return View();
             }
 
@@ -109,9 +105,8 @@ namespace Software_Engineering_2025.Controllers
             return RedirectToAction("Login");
         }
 
-        // ============================================
-        // LOGOUT
-        // ============================================
+        
+        // LOGOUT functionality
         
         public IActionResult Logout()
         {
@@ -119,9 +114,8 @@ namespace Software_Engineering_2025.Controllers
             return RedirectToAction("Index", "Welcome");
         }
 
-        // ============================================
-        // Helper: Redirect to Dashboard Based on Role
-        // ============================================
+      
+        //Redirects to Dashboard Based on Role
         
         private IActionResult RedirectToDashboard(string role)
         {
