@@ -1,0 +1,282 @@
+@model Software_Engineering_2025.Models.AppUser
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sensore - Patient Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 60px;
+            background: linear-gradient(180deg, #6B4FBB 0%, #5D3FD3 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .sidebar-icon {
+            width: 40px;
+            height: 40px;
+            margin: 15px 0;
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .sidebar-icon:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            padding: 25px 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .welcome-text {
+            font-size: 28px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .welcome-name {
+            color: #5D3FD3;
+        }
+
+        .header-subtitle {
+            color: #666;
+            margin-top: 8px;
+            font-size: 14px;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Heatmap placeholder */
+        .heatmap-container {
+            grid-row: span 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 400px;
+        }
+
+        .heatmap-placeholder {
+            text-align: center;
+            color: #666;
+        }
+
+        .heatmap-placeholder h3 {
+            margin-bottom: 10px;
+            color: #5D3FD3;
+        }
+
+        /* Metric cards */
+        .metric-value {
+            font-size: 48px;
+            font-weight: 700;
+            color: #5D3FD3;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .metric-label {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Graph placeholder */
+        .graph-container {
+            grid-column: span 2;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .graph-placeholder {
+            text-align: center;
+        }
+
+        .graph-placeholder h3 {
+            margin-bottom: 10px;
+        }
+
+        /* Logout button */
+        .logout-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid #5D3FD3;
+            color: #5D3FD3;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #5D3FD3;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-icon">💬</div>
+        <div class="sidebar-icon">⚙️</div>
+        <div class="sidebar-icon">👤</div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Logout Button -->
+        <a href="@Url.Action("Logout", "Auth")" class="logout-btn">Logout</a>
+
+        <!-- Welcome Header -->
+        <div class="header">
+            <div class="welcome-text">
+                Welcome, <span class="welcome-name">@Model.FirstName @Model.LastName</span>
+            </div>
+            <div class="header-subtitle">
+                Patient Dashboard - Last updated: @DateTime.Now.ToString("dd MMM yyyy, HH:mm")
+            </div>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Heatmap (Left side - spans 2 rows) -->
+            <div class="card heatmap-container">
+                <div class="heatmap-placeholder">
+                    <h3>🔥 Pressure Heat Map</h3>
+                    <p>32x32 pressure visualization will appear here</p>
+                    <p style="margin-top: 10px; font-size: 12px; color: #999;">
+                        (CSV data integration - Tomorrow)
+                    </p>
+                </div>
+            </div>
+
+            <!-- Contact Area -->
+            <div class="card">
+                <div class="card-title">
+                    <span style="background: #5D3FD3; color: white; padding: 8px 16px; border-radius: 20px; font-size: 12px;">
+                        CONTACT AREA
+                    </span>
+                </div>
+                <div class="metric-value">82%</div>
+                <div class="metric-label">Coverage</div>
+            </div>
+
+            <!-- Coefficient of Variation -->
+            <div class="card">
+                <div class="card-title">
+                    <span style="background: #5D3FD3; color: white; padding: 8px 16px; border-radius: 20px; font-size: 12px;">
+                        COEFFICIENT OF VARIATION
+                    </span>
+                </div>
+                <div class="metric-value">30%</div>
+                <div class="metric-label">Variation</div>
+            </div>
+
+            <!-- Peak Pressure -->
+            <div class="card">
+                <div class="card-title">
+                    <span style="background: #5D3FD3; color: white; padding: 8px 16px; border-radius: 20px; font-size: 12px;">
+                        PEAK PRESSURE
+                    </span>
+                </div>
+                <div class="metric-value">108 <span style="font-size: 24px;">mmHg</span></div>
+                <div class="metric-label">Maximum Pressure</div>
+            </div>
+
+            <!-- Risk Score -->
+            <div class="card">
+                <div class="card-title">
+                    <span style="background: #5D3FD3; color: white; padding: 8px 16px; border-radius: 20px; font-size: 12px;">
+                        RISK SCORE
+                    </span>
+                </div>
+                <div class="metric-value">7 <span style="font-size: 24px;">/10</span></div>
+                <div class="metric-label">High Risk</div>
+            </div>
+
+            <!-- Graph (Bottom - spans 2 columns) -->
+            <div class="card graph-container">
+                <div class="graph-placeholder">
+                    <h3>📊 Peak Pressure Over Time</h3>
+                    <p>Time-series graph will appear here</p>
+                    <p style="margin-top: 10px; font-size: 12px; opacity: 0.8;">
+                        (CSV data integration - Tomorrow)
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Software_Engineering_2025.Services;
 using System;
+using Software_Engineering_2025.Models;
 
 // This controller manages user authentication, including sign-in for first-time users,
 // login for returning users, password resets, and logout functionality.
@@ -64,17 +65,17 @@ namespace Software_Engineering_2025.Controllers
         [HttpPost]
         public IActionResult Login(string email, string password, string? role)
         {
-            var ptest_result = _authService.AuthenticateWithPassword(email, password);
+            var result = _authService.AuthenticateWithPassword(email, password);
 
-            if (!ptest_result.IsSuccessful)
+            if (!result.IsSuccessful)
             {
                 ViewBag.Role = role ?? "User";
-                ViewBag.Error = ptest_result.ErrorMessage;
+                ViewBag.Error = result.ErrorMessage;
                 return View();
             }
 
-            // Redirect to appropriate dashboard based on role
-            return RedirectToDashboard(ptest_result.User!.Role);
+           // ✅ Redirect to appropriate dashboard based on role
+       return RedirectToDashboard(result.User!);
         }
 
    
@@ -117,16 +118,15 @@ namespace Software_Engineering_2025.Controllers
       
         //Redirects to Dashboard Based on Role
         
-        private IActionResult RedirectToDashboard(string role)
-        {
-            return role switch
-            {
-                "Patient" => RedirectToAction("Index", "PatientDashboard"),
-                "Clinician" => RedirectToAction("Index", "ClinicianDashboard"),
-                "Carer" => RedirectToAction("Index", "CarerDashboard"),
-                "Admin" => RedirectToAction("Index", "AdminDashboard"),
-                _ => RedirectToAction("Index", "Welcome")
-            };
-        }
+       private IActionResult RedirectToDashboard(AppUser user)
+{       
+    return user.Role switch
+    {
+        "Patient" => RedirectToAction("Dashboard", "Patient", new { userId = user.Id }),
+        "Clinician" => RedirectToAction("Dashboard", "Clinician", new { userId = user.Id }),
+        "Admin" => RedirectToAction("Index", "Admin"),
+        _ => RedirectToAction("Index", "Welcome")
+    };
+}
     }
 }
