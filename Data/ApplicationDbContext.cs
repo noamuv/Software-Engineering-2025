@@ -47,12 +47,28 @@ namespace Software_Engineering_2025.Data
                 .HasForeignKey<Admin>(a => a.User_ID)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Configure Carer-User relationship (One-to-One)  ← ADD THIS
+            // Configure Carer-User relationship (One-to-One)
             modelBuilder.Entity<Carer>()
                 .HasOne(c => c.User)
                 .WithOne()
                 .HasForeignKey<Carer>(c => c.User_ID)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // Configure Patient-User relationship (One-to-One)
+            // Restrict instead of Cascade to avoid circular cascade paths
+            modelBuilder.Entity<Patient>()
+                .HasOne(p => p.User)
+                .WithOne()
+                .HasForeignKey<Patient>(p => p.User_ID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Configure Clinician-User relationship (One-to-One)
+            // Restrict instead of Cascade to avoid circular cascade paths
+            modelBuilder.Entity<Clinician>()
+                .HasOne(c => c.User)
+                .WithOne()
+                .HasForeignKey<Clinician>(c => c.User_ID)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Configure Patient-Clinician relationship (Many-to-One)
             modelBuilder.Entity<Patient>()
@@ -89,7 +105,7 @@ namespace Software_Engineering_2025.Data
                 .HasForeignKey(ca => ca.Granted_By_User_ID)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Configure CarerAccess-RevokedByUser relationship (Many-to-One, optional)
+            // Configure CarerAccess-RevokedByUser relationship (Many-to-One)
             modelBuilder.Entity<CarerAccess>()
                 .HasOne(ca => ca.RevokedByUser)
                 .WithMany()
@@ -121,11 +137,11 @@ namespace Software_Engineering_2025.Data
                     Type_Name = "Patient", 
                     Description = "Patient user monitoring pressure data" 
                 },
-                new UserType  // OPTIONAL: Add Carer UserType
+                new UserType  
                 { 
                     User_Type_ID = 4, 
                     Type_Name = "Carer", 
-                    Description = "Authorized carer with access to patient data" 
+                    Description = "Authorised carer with access to patient data" 
                 }
             );
 
