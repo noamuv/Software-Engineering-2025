@@ -9,7 +9,7 @@ namespace Software_Engineering_2025.Data
         {
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
             
-            optionsBuilder.UseSqlite("Data Source=SensoreDB.db");
+            optionsBuilder.UseSqlServer("Data Source=SensoreDB.db");
 
             return new ApplicationDbContext(optionsBuilder.Options);
         }
