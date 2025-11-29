@@ -74,7 +74,7 @@ namespace Software_Engineering_2025.Controllers
                 return View();
             }
 
-           // ✅ Redirect to appropriate dashboard based on role
+           // Redirect to appropriate dashboard based on role
        return RedirectToDashboard(result.User!);
         }
 

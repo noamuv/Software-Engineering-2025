@@ -19,6 +19,8 @@ builder.Services.AddControllersWithViews();
 // Dependency injection for services
 builder.Services.AddScoped<PasswordValidator>();
 builder.Services.AddScoped<AuthenticationService>();
+builder.Services.AddScoped<PressureDataService>();
+builder.Services.AddScoped<CsvImportService>();
 
 var app = builder.Build();
 
