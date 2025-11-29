@@ -15,9 +15,7 @@ namespace Software_Engineering_2025.Controllers
             _context = context;
         }
 
-        // ============================================
-        // PATIENT DASHBOARD
-        // ============================================
+        // DASHBOARD - Patient Overview
         
         [HttpGet]
         public IActionResult Dashboard(Guid userId)
@@ -30,11 +28,18 @@ namespace Software_Engineering_2025.Controllers
                 return RedirectToAction("Index", "Welcome");
             }
 
+            
+
+            var pressureData = _pressureDataService.GetLatestPressureData(userId);
+            var metrics = PressureMatrix.CalculateMetrics();
+
+            ViewBag.PressureMatrix = PressureMatrix;
+            ViewBag.Metrics = metrics;
+
             // Pass patient to view
             return View(patient);
         }
 
-        // PLACEHOLDER:  add CSV data processing 
-        
+      
     }
 }
