@@ -32,6 +32,15 @@ namespace Software_Engineering_2025.Models
                 entity.Property(e => e.PasswordHash).IsRequired(false);
                 entity.Property(e => e.TemporaryPassword).IsRequired(false);
             });
+
+             // This sets up the PressureSession table structure and constraints
+             modelBuilder.Entity<PressureSession>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.PatientUserId).IsRequired();
+                entity.Property(e => new {e.PatientUserId, e.RecordedDate });
+           
+            });
         }
     }
 }

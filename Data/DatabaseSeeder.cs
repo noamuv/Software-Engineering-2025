@@ -26,6 +26,7 @@ namespace Software_Engineering_2025.Data
                     Email = "patient1@example.com",
                     FirstName = "John",
                     LastName = "Doe",
+                     CsvUserId = "71e66ab3",
                     TemporaryPassword = "TempPass123!",
                     RequiresPasswordReset = true,
                     Role = "Patient"
@@ -36,6 +37,7 @@ namespace Software_Engineering_2025.Data
                     Email = "qaedasalawu@gmail.com",
                     FirstName = "Qaeda",
                     LastName = "Salawu",
+                    CsvUserId = "1c0fd777",
                     TemporaryPassword = "TestPass123!",
                     RequiresPasswordReset = true,
                     Role = "Patient"
