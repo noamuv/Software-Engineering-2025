@@ -17,7 +17,8 @@ namespace Software_Engineering_2025.Services
             _context = context;
         }
 
-        // Import all CSV files from a folder
+        // For each patient all their CSV files in a folder
+        // Are i
         public void ImportCsvFolder(string folderPath)
         {
             var csvFiles = Directory.GetFiles(folderPath, "*.csv");
@@ -96,12 +97,13 @@ namespace Software_Engineering_2025.Services
             Console.WriteLine($"✓ Imported {fileName}: Peak={metrics.PeakPressure}, Contact={metrics.ContactAreaPercent:F1}%, Risk={metrics.RiskScore}");
         }
 
-        // Parse CSV file into 32x32 matrix
+        // This method reads the CSV and converts it to a PressureMatrix
         private PressureMatrix ParseCsvToMatrix(string filePath)
         {
             var matrix = new PressureMatrix();
             var lines = File.ReadAllLines(filePath);
 
+            // This assumes CSV has at least 32 lines and 32 values per line
             for (int row = 0; row < Math.Min(32, lines.Length); row++)
             {
                 var values = lines[row].Split(',');
@@ -118,10 +120,10 @@ namespace Software_Engineering_2025.Services
             return matrix;
         }
 
-        // Serialize matrix to JSON
+        // This method serializes the 32x32 matrix to JSON
         private string SerializeMatrix(int[,] matrix)
         {
-            // Convert 2D array to jagged array for JSON serialization
+            // Converts 2D array to jagged array for JSON serialization
             int[][] jaggedArray = new int[32][];
             for (int i = 0; i < 32; i++)
             {
@@ -135,7 +137,7 @@ namespace Software_Engineering_2025.Services
             return JsonSerializer.Serialize(jaggedArray);
         }
 
-        // Deserialize JSON to matrix
+        // This Deserializes JSON to matrix
         public int[,] DeserializeMatrix(string json)
         {
             var jaggedArray = JsonSerializer.Deserialize<int[][]>(json);
