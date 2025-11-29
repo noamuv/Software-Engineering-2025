@@ -8,6 +8,7 @@ namespace Software_Engineering_2025.Controllers
     public class PatientController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly PressureDataService _pressureDataService;
 
         public PatientController(ApplicationDbContext context)
         {
