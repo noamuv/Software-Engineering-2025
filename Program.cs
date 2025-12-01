@@ -24,29 +24,59 @@ builder.Services.AddScoped<CsvImportService>();
 
 var app = builder.Build();
 
-
-// ADD THIS SECTION IF IT'S MISSING
+// Seed the database
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     var  csvImport = scope.ServiceProvider.GetRequiredService<CsvImportService>();
     
+    // Apply any pending migrations
     Console.WriteLine("Applying migrations...");
     context.Database.Migrate();
     
+    // Seed initial data
     Console.WriteLine("Running seeder...");
     DatabaseSeeder.Seed(context);
 }
+
+   if (!context.PressureSessions.Any())
+        {
+            Console.WriteLine("📊 Importing pressure data from CSV files...");
+            
+            // Get path to CSV folder in project
+            var csvFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "Data", "CsvFiles");
+            
+            if (Directory.Exists(csvFolderPath))
+            {
+                csvImport.ImportCsvFolder(csvFolderPath);
+                Console.WriteLine("✅ Pressure data imported successfully!");
+            }
+            else
+            {
+                Console.WriteLine("⚠️  CSV folder not found. Please add CSV files to Data/CsvFiles/");
+            }
+        }
+        else
+        {
+            Console.WriteLine("✓ Pressure data already exists in database");
+        }
+    
+    catch (Exception ex)
+    {
+        Console.WriteLine($"❌ Error during initialization: {ex.Message}");
+    }
+
+
+Console.WriteLine("🚀 Application ready!");
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
-//These replace MapStaticAssets and WithStaticAssets
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();   
