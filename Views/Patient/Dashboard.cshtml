@@ -2,6 +2,9 @@
 
 @{
     Layout = null;
+     var sessions = ViewBag.AvailableSessions as List<Software_Engineering_2025.Models.PressureSession>;
+    var currentSession = ViewBag.CurrentSession as Software_Engineering_2025.Models.PressureSession;
+    var metrics = ViewBag.Metrics;
 }
 
 <!DOCTYPE html>
@@ -176,7 +179,7 @@
             color: #5D3FD3;
             border-radius: 8px;
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 250;
             transition: all 0.3s;
         }
 
@@ -184,6 +187,29 @@
             background: #5D3FD3;
             color: white;
         }
+
+         .date-selector {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .date-selector label {
+            font-weight: 600;
+            color: #333;
+            margin-right: 10px;
+        }
+        
+        .date-selector select {
+            padding: 10px 15px;
+            border: 2px solid #5D3FD3;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
     </style>
 </head>
 <body>
@@ -209,6 +235,24 @@
             </div>
         </div>
 
+
+
+                @if (sessions != null && sessions.Count > 0)
+        {
+            <div class="date-selector">
+                <label>View data from:</label>
+                <select id="dateSelector" onchange="loadDate(this.value)">
+                    @foreach (var session in sessions)
+                    {
+                        <option value="@session.RecordedDate.ToString("yyyy-MM-dd")" 
+                                @(session.Id == currentSession.Id ? "selected" : "")>
+                            @session.RecordedDate.ToString("MMMM dd, yyyy")
+                        </option>
+                    }
+                </select>
+            </div>
+        }
+
         <!-- Dashboard Grid -->
         <div class="dashboard-grid">
             <!-- Heatmap (Left side - spans 2 rows) -->
@@ -224,59 +268,62 @@
 
             <!-- Contact Area -->
             <div class="card">
-                <div class="card-title">
-                    <span style="background: #5D3FD3; color: white; padding: 8px 16px; border-radius: 20px; font-size: 12px;">
-                        CONTACT AREA
-                    </span>
-                </div>
-                <div class="metric-value">82%</div>
-                <div class="metric-label">Coverage</div>
+                <div class="card-title">CONTACT AREA</div>
+                <div class="metric-value" id="contactArea">@metrics.ContactAreaPercent<span>%</span></div>
             </div>
 
             <!-- Coefficient of Variation -->
             <div class="card">
-                <div class="card-title">
-                    <span style="background: #5D3FD3; color: white; padding: 8px 16px; border-radius: 20px; font-size: 12px;">
-                        COEFFICIENT OF VARIATION
-                    </span>
-                </div>
-                <div class="metric-value">30%</div>
-                <div class="metric-label">Variation</div>
+                <div class="card-title">COEFFICIENT OF VARIATION</div>
+                <div class="metric-value" id="coefficientOfVariation">@metrics.CoefficientOfVariation<span>%</span></div>
             </div>
 
             <!-- Peak Pressure -->
             <div class="card">
-                <div class="card-title">
-                    <span style="background: #5D3FD3; color: white; padding: 8px 16px; border-radius: 20px; font-size: 12px;">
-                        PEAK PRESSURE
-                    </span>
-                </div>
-                <div class="metric-value">108 <span style="font-size: 24px;">mmHg</span></div>
-                <div class="metric-label">Maximum Pressure</div>
+                <div class="card-title">PEAK PRESSURE </div>
+                <div class="metric-value" id="peakPressure">@metrics.PeakPressure<span>mmHg</span></div>
             </div>
 
             <!-- Risk Score -->
             <div class="card">
-                <div class="card-title">
-                    <span style="background: #5D3FD3; color: white; padding: 8px 16px; border-radius: 20px; font-size: 12px;">
-                        RISK SCORE
-                    </span>
-                </div>
-                <div class="metric-value">7 <span style="font-size: 24px;">/10</span></div>
-                <div class="metric-label">High Risk</div>
+                <div class="card-title">RISK SCORE</div>
+                <div class="metric-value" id="riskScore">@metrics.RiskScore<span>/10</div>
             </div>
 
-            <!-- Graph (Bottom - spans 2 columns) -->
-            <div class="card graph-container">
-                <div class="graph-placeholder">
-                    <h3>📊 Peak Pressure Over Time</h3>
-                    <p>Time-series graph will appear here</p>
-                    <p style="margin-top: 10px; font-size: 12px; opacity: 0.8;">
-                        (CSV data integration - Tomorrow)
-                    </p>
-                </div>
-            </div>
+          
+
         </div>
     </div>
+
+    <script>
+        function loadDate(date) {
+            // Show loading indicator
+            document.getElementById('metricsDisplay').style.opacity = '0.5';
+            
+            // Fetch data for selected date
+            fetch(`/Patient/GetPressureData?userId=@Model.Id&date=${date}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Update metrics
+                    document.getElementById('peakPressure').innerHTML = 
+                        `${data.metrics.peakPressure} <span>mmHg</span>`;
+                    document.getElementById('contactArea').innerHTML = 
+                        `${data.metrics.contactArea}<span>%</span>`;
+                    document.getElementById('riskScore').innerHTML = 
+                        `${data.metrics.riskScore}<span>/10</span>`;
+                    document.getElementById('coefficientOfVariation').innerHTML = 
+                        `${data.metrics.coefficientOfVariation}<span>%</span>`;
+                    
+                    // TODO: Update heat map (tomorrow's work!)
+                    
+                    // Remove loading indicator
+                    document.getElementById('metricsDisplay').style.opacity = '1';
+                })
+                .catch(error => {
+                    console.error('Error loading data:', error);
+                    alert('Failed to load data');
+                });
+        }
+    </script>
 </body>
 </html>
