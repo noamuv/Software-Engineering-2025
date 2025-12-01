@@ -29,6 +29,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    var  csvImport = scope.ServiceProvider.GetRequiredService<CsvImportService>();
     
     Console.WriteLine("Applying migrations...");
     context.Database.Migrate();

@@ -28,18 +28,17 @@ namespace Software_Engineering_2025.Controllers
                 return RedirectToAction("Index", "Welcome");
             }
 
-            
 
+            // Get latest pressure data
             var pressureData = _pressureDataService.GetLatestPressureData(userId);
             var metrics = PressureMatrix.CalculateMetrics();
 
+           // Pass data to view
             ViewBag.PressureMatrix = PressureMatrix;
             ViewBag.Metrics = metrics;
 
             // Pass patient to view
             return View(patient);
         }
-
-      
     }
 }
