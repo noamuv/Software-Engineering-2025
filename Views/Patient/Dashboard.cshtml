@@ -244,10 +244,10 @@
                 <select id="dateSelector" onchange="loadDate(this.value)">
                     @foreach (var session in sessions)
                     {
-                        <option value="@session.RecordedDate.ToString("yyyy-MM-dd")" 
-                                @(session.Id == currentSession.Id ? "selected" : "")>
-                            @session.RecordedDate.ToString("MMMM dd, yyyy")
-                        </option>
+                       <option value="@session.RecordedDate.ToString("yyyy-MM-dd")" 
+        @(session.Id == currentSession.Id ? "selected" : "")>
+    @session.RecordedDate.ToString("MMMM dd, yyyy")
+</option>
                     }
                 </select>
             </div>

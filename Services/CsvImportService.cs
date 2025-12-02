@@ -18,7 +18,6 @@ namespace Software_Engineering_2025.Services
         }
 
         // For each patient all their CSV files in a folder
-        // Are i
         public void ImportCsvFolder(string folderPath)
         {
             var csvFiles = Directory.GetFiles(folderPath, "*.csv");

@@ -29,16 +29,17 @@ using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     var  csvImport = scope.ServiceProvider.GetRequiredService<CsvImportService>();
-    
-    // Apply any pending migrations
-    Console.WriteLine("Applying migrations...");
-    context.Database.Migrate();
-    
-    // Seed initial data
-    Console.WriteLine("Running seeder...");
-    DatabaseSeeder.Seed(context);
-}
 
+    try
+    {
+        // Apply migrations
+        Console.WriteLine("📦 Applying database migrations...");
+        context.Database.Migrate();
+        
+        // Seed users
+        Console.WriteLine("🌱 Seeding users...");
+        DatabaseSeeder.Seed(context);
+        
    if (!context.PressureSessions.Any())
         {
             Console.WriteLine("📊 Importing pressure data from CSV files...");
@@ -60,13 +61,12 @@ using (var scope = app.Services.CreateScope())
         {
             Console.WriteLine("✓ Pressure data already exists in database");
         }
-    
+    }
     catch (Exception ex)
     {
         Console.WriteLine($"❌ Error during initialization: {ex.Message}");
     }
-
-
+   }
 Console.WriteLine("🚀 Application ready!");
 
 // Configure the HTTP request pipeline.

@@ -37,7 +37,8 @@ namespace Software_Engineering_2025.Models
              modelBuilder.Entity<PressureSession>(entity =>
             {
                 entity.HasKey(e => e.Id);
-                entity.Property(e => e.PatientUserId).IsRequired();
+                entity.Property(e => e.PatientUserId).IsRequired().HasMaxLength(50);;
+                 entity.Property(e => e.MatrixJson).IsRequired();
                 entity.Property(e => new {e.PatientUserId, e.RecordedDate });
            
             });
