@@ -9,7 +9,7 @@ namespace Software_Engineering_2025.Controllers
     public class PatientController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly PressureDataService _pressureDataService;
+        //private readonly PressureDataService _pressureDataService;
         private readonly CsvImportService _csvImport;
 
         public PatientController(ApplicationDbContext context, CsvImportService csvImport)
