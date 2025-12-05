@@ -26,7 +26,7 @@ namespace Software_Engineering_2025.Data
                     Email = "patient1@example.com",
                     FirstName = "John",
                     LastName = "Doe",
-                     CsvUserId = "71e66ab3",
+                    CsvUserId = "71e66ab3",
                     TemporaryPassword = "TempPass123!",
                     RequiresPasswordReset = true,
                     Role = "Patient"

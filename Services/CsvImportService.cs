@@ -72,9 +72,24 @@ namespace Software_Engineering_2025.Services
 
             // Parse CSV into matrix
             var matrix = ParseCsvToMatrix(filePath);
+
+            int maxValueInMatrix = 0;
+            for (int i = 0; i < 32; i++)
+            {
+                for (int j = 0; j < 32; j++)
+                {
+                    if (matrix.Data[i, j] > maxValueInMatrix)
+                    {
+                        maxValueInMatrix = matrix.Data[i, j];
+                    }
+                }
+            }
             
             // Calculate metrics
             var metrics = matrix.CalculateMetrics();
+
+            // Debug output
+            Console.WriteLine($"{fileName}: Calculated peak pressure = {metrics.PeakPressure}");
 
             // Create session record
             var session = new PressureSession
@@ -111,9 +126,20 @@ namespace Software_Engineering_2025.Services
                 {
                     if (int.TryParse(values[col].Trim(), out int pressure))
                     {
+                        //Cap pressure values to a max of 255
+                        if (pressure > 255)
+                        {
+                            invalidValues++;
+                            pressure = 255;
+                        }
                         matrix.Data[row, col] = pressure;
                     }
                 }
+            }
+
+            if (invalidValues > 0)
+            {
+                Console.WriteLine($"Warning: {invalidValues} pressure values exceeded 255 and were capped.");
             }
 
             return matrix;

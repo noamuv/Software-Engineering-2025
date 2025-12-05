@@ -12,6 +12,7 @@ namespace Software_Engineering_2025.Models
 
         //This Dbset represents the AppUser table in the database
         public DbSet<AppUser> AppUsers { get; set; }
+              public DbSet<PressureSession> PressureSessions { get; set; }
 
         //Configures the model properties and relationships
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -39,7 +40,8 @@ namespace Software_Engineering_2025.Models
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.PatientUserId).IsRequired().HasMaxLength(50);;
                  entity.Property(e => e.MatrixJson).IsRequired();
-                entity.Property(e => new {e.PatientUserId, e.RecordedDate });
+                entity.HasIndex(e => e.PatientUserId);
+                entity.HasIndex(e => e.RecordedDate);
            
             });
         }

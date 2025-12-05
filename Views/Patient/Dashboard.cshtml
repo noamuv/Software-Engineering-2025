@@ -210,6 +210,75 @@
             cursor: pointer;
         }
 
+        /* Tooltip Styles */
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.info-icon {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background: #5D3FD3;
+    color: white;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: help;
+    margin-left: 8px;
+}
+
+.info-icon:hover {
+    background: #7C5FE8;
+}
+
+.tooltip {
+    visibility: hidden;
+    position: absolute;
+    top: 30px;
+    right: 0;
+    width: 280px;
+    background: #333;
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: normal;
+    line-height: 1.5;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.tooltip::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    right: 10px;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid #333;
+}
+
+.info-icon:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+
+.tooltip strong {
+    color: #5D3FD3;
+    font-weight: 600;
+}
+
     </style>
 </head>
 <body>
@@ -295,35 +364,49 @@
         </div>
     </div>
 
-    <script>
-        function loadDate(date) {
-            // Show loading indicator
-            document.getElementById('metricsDisplay').style.opacity = '0.5';
+<script>
+function loadDate(date) {
+    // Show loading state
+    document.getElementById('metricsDisplay').style.opacity = '0.5';
+    
+    // Fetch data for selected date
+    fetch(`/Patient/GetPressureData?userId=@Model.Id&date=${date}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to load data');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Loaded data:', data); // Debug log
             
-            // Fetch data for selected date
-            fetch(`/Patient/GetPressureData?userId=@Model.Id&date=${date}`)
-                .then(response => response.json())
-                .then(data => {
-                    // Update metrics
-                    document.getElementById('peakPressure').innerHTML = 
-                        `${data.metrics.peakPressure} <span>mmHg</span>`;
-                    document.getElementById('contactArea').innerHTML = 
-                        `${data.metrics.contactArea}<span>%</span>`;
-                    document.getElementById('riskScore').innerHTML = 
-                        `${data.metrics.riskScore}<span>/10</span>`;
-                    document.getElementById('coefficientOfVariation').innerHTML = 
-                        `${data.metrics.coefficientOfVariation}<span>%</span>`;
-                    
-                    // TODO: Update heat map (tomorrow's work!)
-                    
-                    // Remove loading indicator
-                    document.getElementById('metricsDisplay').style.opacity = '1';
-                })
-                .catch(error => {
-                    console.error('Error loading data:', error);
-                    alert('Failed to load data');
-                });
-        }
-    </script>
+            // Update metrics - Make sure IDs match your HTML!
+            document.getElementById('peakPressure').innerHTML = 
+                `${data.metrics.peakPressure} <span>mmHg</span>`;
+            document.getElementById('contactArea').innerHTML = 
+                `${data.metrics.contactArea.toFixed(1)}<span>%</span>`;
+            document.getElementById('riskScore').innerHTML = 
+                `${data.metrics.riskScore}<span>/10</span>`;
+            document.getElementById('coefficientVariation').innerHTML = 
+                `${data.metrics.cv.toFixed(1)}<span>%</span>`;
+            
+            // Update date display if you have one
+            const dateDisplay = document.getElementById('currentDate');
+            if (dateDisplay) {
+                dateDisplay.textContent = data.date;
+            }
+            
+            // Remove loading state
+            document.getElementById('metricsDisplay').style.opacity = '1';
+            
+            console.log('Metrics updated successfully');
+        })
+        .catch(error => {
+            console.error('Error loading data:', error);
+            alert('Failed to load pressure data. Please try again.');
+            document.getElementById('metricsDisplay').style.opacity = '1';
+        });
+}
+</script>
 </body>
 </html>
