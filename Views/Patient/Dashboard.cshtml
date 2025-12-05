@@ -335,8 +335,21 @@
                 </div>
             </div>
 
-            <!-- Contact Area -->
+          <div class="metrics-grid" id="metricsGrid">
+            <!-- Peak Pressure -->
             <div class="card">
+                 <div class="card-header">
+                <div class="card-title">PEAK PRESSURE </div>
+                <div class="info-icon">i
+                    <div class="tooltip">
+                        <strong>Peak Pressure</strong> refers to the highest pressure value recorded in the pressure matrix during the session. It is measured in millimeters of mercury (mmHg) and indicates the maximum force exerted on a specific area.
+                    </div>
+                </div>
+            </div>
+                <div class="metric-value" id="peakPressure">@metrics.PeakPressure<span>mmHg</span></div>
+            </div>
+            <!-- Contact Area -->
+                    <div class="card-title">CONTACT AREA</div>
                 <div class="card-title">CONTACT AREA</div>
                 <div class="metric-value" id="contactArea">@metrics.ContactAreaPercent<span>%</span></div>
             </div>
@@ -347,11 +360,7 @@
                 <div class="metric-value" id="coefficientOfVariation">@metrics.CoefficientOfVariation<span>%</span></div>
             </div>
 
-            <!-- Peak Pressure -->
-            <div class="card">
-                <div class="card-title">PEAK PRESSURE </div>
-                <div class="metric-value" id="peakPressure">@metrics.PeakPressure<span>mmHg</span></div>
-            </div>
+        
 
             <!-- Risk Score -->
             <div class="card">
