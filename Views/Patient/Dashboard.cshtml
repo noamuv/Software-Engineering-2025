@@ -102,14 +102,13 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
-        .card-title {
-            font-size: 16px;
+        .card-header.card-title {
+            font-size: 13px;
             font-weight: 600;
-            color: #333;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            color: #666;
+            margin: 0;
+            letter-spacing: 1px;
+           
         }
 
         /* Heatmap placeholder */
@@ -348,15 +347,32 @@
             </div>
                 <div class="metric-value" id="peakPressure">@metrics.PeakPressure<span>mmHg</span></div>
             </div>
+
             <!-- Contact Area -->
-                    <div class="card-title">CONTACT AREA</div>
-                <div class="card-title">CONTACT AREA</div>
+            <div class="card">
+            <div class="card-header">
+                       <div class="card-title">CONTACT AREA</div>
+            <div class="info-icon">i
+                    <div class="tooltip">
+                        <strong>Contact Area</strong> represents the percentage of the seating surface that is in contact with the patient. It is calculated by determining the number of sensors registering pressure above a certain threshold and expressing it as a percentage of the total sensor area.    
+         </div>
+                </div>
+            </div>
+          
                 <div class="metric-value" id="contactArea">@metrics.ContactAreaPercent<span>%</span></div>
             </div>
 
+
             <!-- Coefficient of Variation -->
             <div class="card">
+                    <div class="card-header">
                 <div class="card-title">COEFFICIENT OF VARIATION</div>
+                <div class="info-icon">i
+                    <div class="tooltip">
+                        The <strong>Coefficient of Variation (CV)</strong> is a statistical measure of the relative variability of pressure readings in the matrix. It is calculated as the ratio of the standard deviation to the mean pressure, expressed as a percentage. A higher CV indicates greater variability in pressure distribution.
+                    </div>
+                </div>
+            </div>
                 <div class="metric-value" id="coefficientOfVariation">@metrics.CoefficientOfVariation<span>%</span></div>
             </div>
 
@@ -364,7 +380,14 @@
 
             <!-- Risk Score -->
             <div class="card">
+                    <div class="card-header">
                 <div class="card-title">RISK SCORE</div>
+                <div class="info-icon">i
+                    <div class="tooltip">
+                        The <strong>Risk Score</strong> is a composite metric that assesses the overall risk of pressure ulcers based on various factors derived from the pressure data, including peak pressure, contact area, and coefficient of variation. The score ranges from 0 to 10, with higher scores indicating greater risk.
+                    </div>
+                </div>
+            </div>
                 <div class="metric-value" id="riskScore">@metrics.RiskScore<span>/10</div>
             </div>
 
@@ -372,50 +395,102 @@
 
         </div>
     </div>
+       <script>
+    console.log('🚀 Dashboard JavaScript initializing...');
 
-<script>
-function loadDate(date) {
-    // Show loading state
-    document.getElementById('metricsDisplay').style.opacity = '0.5';
-    
-    // Fetch data for selected date
-    fetch(`/Patient/GetPressureData?userId=@Model.Id&date=${date}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to load data');
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Loaded data:', data); // Debug log
-            
-            // Update metrics - Make sure IDs match your HTML!
-            document.getElementById('peakPressure').innerHTML = 
-                `${data.metrics.peakPressure} <span>mmHg</span>`;
-            document.getElementById('contactArea').innerHTML = 
-                `${data.metrics.contactArea.toFixed(1)}<span>%</span>`;
-            document.getElementById('riskScore').innerHTML = 
-                `${data.metrics.riskScore}<span>/10</span>`;
-            document.getElementById('coefficientVariation').innerHTML = 
-                `${data.metrics.cv.toFixed(1)}<span>%</span>`;
-            
-            // Update date display if you have one
-            const dateDisplay = document.getElementById('currentDate');
-            if (dateDisplay) {
-                dateDisplay.textContent = data.date;
-            }
-            
-            // Remove loading state
-            document.getElementById('metricsDisplay').style.opacity = '1';
-            
-            console.log('Metrics updated successfully');
-        })
-        .catch(error => {
-            console.error('Error loading data:', error);
-            alert('Failed to load pressure data. Please try again.');
-            document.getElementById('metricsDisplay').style.opacity = '1';
+    // Wait for DOM to fully load
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('✅ DOM loaded');
+        
+        const dateSelector = document.getElementById('dateSelector');
+        const metricsGrid = document.getElementById('metricsGrid');
+
+        if (!dateSelector) {
+            console.error('❌ Date selector not found!');
+            return;
+        }
+
+        if (!metricsGrid) {
+            console.error('❌ Metrics grid not found!');
+            return;
+        }
+
+        console.log('✅ Elements found, attaching event listener');
+
+        // Add change event listener
+        dateSelector.addEventListener('change', function(event) {
+            const selectedDate = event.target.value;
+            console.log('📅 Date changed to:', selectedDate);
+            loadPressureData(selectedDate);
         });
-}
+
+        console.log('✅ Event listener attached successfully');
+
+        function loadPressureData(date) {
+            console.log('🔄 Loading data for date:', date);
+            
+            // Show loading state
+            metricsGrid.classList.add('loading');
+            dateSelector.disabled = true; // Prevent multiple clicks
+
+            // Build URL
+            const url = `/Patient/GetPressureData?userId=@Model.Id&date=${date}`;
+            console.log('🌐 Fetching from:', url);
+
+            fetch(url)
+                .then(response => {
+                    console.log('📡 Response status:', response.status);
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('📦 Received data:', data);
+
+                    // Validate data
+                    if (!data.metrics) {
+                        throw new Error('Invalid data: missing metrics');
+                    }
+
+                    // Update each metric with animation
+                    updateMetricWithAnimation('peakPressure', data.metrics.peakPressure, 'mmHg');
+                    updateMetricWithAnimation('contactArea', data.metrics.contactArea.toFixed(1), '%');
+                    updateMetricWithAnimation('coefficientVariation', data.metrics.cv.toFixed(1), '%');
+                    updateMetricWithAnimation('riskScore', data.metrics.riskScore, '/10');
+
+                    console.log('✅ All metrics updated successfully');
+                })
+                .catch(error => {
+                    console.error('❌ Error loading data:', error);
+                    alert('Failed to load pressure data:\n' + error.message + '\n\nPlease try again or contact support.');
+                })
+                .finally(() => {
+                    // Remove loading state
+                    metricsGrid.classList.remove('loading');
+                    dateSelector.disabled = false;
+                });
+        }
+
+        function updateMetricWithAnimation(elementId, value, unit) {
+            const element = document.getElementById(elementId);
+            if (!element) {
+                console.error(`❌ Element not found: ${elementId}`);
+                return;
+            }
+
+            // Fade out
+            element.style.opacity = '0.3';
+            
+            // Update after brief delay
+            setTimeout(() => {
+                element.innerHTML = `${value} <span>${unit}</span>`;
+                // Fade in
+                element.style.opacity = '1';
+                console.log(`✅ Updated ${elementId}: ${value}${unit}`);
+            }, 200);
+        }
+    });
 </script>
 </body>
 </html>

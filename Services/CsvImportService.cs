@@ -117,6 +117,7 @@ namespace Software_Engineering_2025.Services
             var matrix = new PressureMatrix();
             var lines = File.ReadAllLines(filePath);
 
+            int invalidValues = 0;
             // This assumes CSV has at least 32 lines and 32 values per line
             for (int row = 0; row < Math.Min(32, lines.Length); row++)
             {
