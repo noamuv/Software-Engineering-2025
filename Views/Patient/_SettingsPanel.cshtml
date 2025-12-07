@@ -1,26 +1,21 @@
 @model Software_Engineering_2025.Models.AppUser
 
-<html>
-<head>
-    <link rel="stylesheet" type="text/css" href="~/css/patient-settingspanel.css" />
-</head>
-
-
 <div class="panel-header">
     Settings
     <button class="close-btn" onclick="closePanel()">×</button>
 </div>
 
 <div class="tabs">
-    <button class="tab active" onclick="switchTab('passwordTab', event)">Password</button>
-    <button class="tab" onclick="switchTab('careTeamTab', event)">Care Team</button>
+    <button class="tab active" onclick="switchSettingsTab('password', event)">Password</button>
+    <button class="tab" onclick="switchSettingsTab('careteam', event)">Care Team</button>
+    <button class="tab" onclick="switchSettingsTab('documents', event)">Documents</button>
 </div>
 
 <div class="panel-content">
-    <!-- Password Tab -->
+    <!-- ===== PASSWORD TAB ===== -->
     <div id="passwordTab" class="tab-content active">
         <h3>Change Password</h3>
-        <form id="changePasswordForm" onsubmit="changePassword(event)">
+        <form id="changePasswordForm" onsubmit="handlePasswordChange(event)">
             <div class="form-group">
                 <label>Current Password</label>
                 <input type="password" name="currentPassword" required>
@@ -37,10 +32,10 @@
         </form>
     </div>
 
-    <!-- Care Team Tab -->
-    <div id="careTeamTab" class="tab-content">
-        <h3>Carers</h3>
-        <p class="subtitle">Add carers who can view your data</p>
+    <!-- ===== CARE TEAM TAB ===== -->
+    <div id="careteamTab" class="tab-content">
+        <h3>Add Carer</h3>
+        <p class="subtitle">Carers can view your pressure data and monitor your health.</p>
        
         <div class="form-group">
             <label>Carer Email</label>
@@ -48,22 +43,396 @@
         </div>
         <button class="btn btn-primary" onclick="addCarer()">Add Carer</button>
        
-        <div id="carersList" style="margin-top: 20px;"></div>
+        <div id="carersList"></div>
 
         <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
 
-        <h3>Clinician</h3>
-        <p class="subtitle">Add your clinician</p>
+        <h3>Add Clinician</h3>
+        <p class="subtitle">Your primary healthcare provider.</p>
        
         <div class="form-group">
             <label>Clinician Email</label>
-            <input type="email" id="clinicianEmail" placeholder="clinician@example.com">
+            <input type="email" id="clinicianEmail" placeholder="doctor@hospital.com">
         </div>
         <button class="btn btn-primary" onclick="addClinician()">Add Clinician</button>
        
-        <div id="cliniciansList" style="margin-top: 20px;"></div>
+        <div id="cliniciansList"></div>
+    </div>
+
+    <!-- ===== DOCUMENTS TAB ===== -->
+    <div id="documentsTab" class="tab-content">
+        <h3>Health Documents</h3>
+        <p class="subtitle">Upload medical records, prescriptions, and test results.</p>
+
+        <!-- Upload Zone -->
+        <div class="upload-zone" onclick="document.getElementById('fileUploadInput').click()">
+            <div class="upload-icon">📄</div>
+            <div class="upload-text">Click to upload</div>
+            <div class="upload-hint">PDF, JPG, PNG (Max 10MB)</div>
+        </div>
+        <input type="file" id="fileUploadInput" style="display: none;" multiple
+               accept=".pdf,.jpg,.jpeg,.png" onchange="handleFileUpload(event)">
+
+        <!-- File List -->
+        <div id="uploadedFilesList" class="file-list">
+            <div class="empty-state">📭 No documents uploaded</div>
+        </div>
     </div>
 </div>
-</html>
 
-<script src="~/js/patient-settingspanel.js"></script>
+<style>
+    .panel-header {
+        background: linear-gradient(135deg, #5D3FD3, #764ba2);
+        color: white;
+        padding: 25px;
+        font-size: 20px;
+        font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .close-btn {
+        background: rgba(255,255,255,0.2);
+        border: none;
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 20px;
+    }
+
+    .tabs {
+        display: flex;
+        border-bottom: 2px solid #eee;
+    }
+
+    .tab {
+        flex: 1;
+        padding: 15px;
+        background: white;
+        border: none;
+        color: #666;
+        font-weight: 600;
+        cursor: pointer;
+        border-bottom: 3px solid transparent;
+        transition: all 0.3s ease;
+    }
+
+    .tab.active {
+        color: #5D3FD3;
+        border-bottom-color: #5D3FD3;
+    }
+
+    .panel-content {
+        padding: 25px;
+    }
+
+    .tab-content {
+        display: none;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    h3 {
+        font-size: 18px;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .subtitle {
+        color: #666;
+        font-size: 13px;
+        margin-bottom: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+        font-size: 14px;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+    }
+
+    .form-group input:focus {
+        outline: none;
+        border-color: #5D3FD3;
+    }
+
+    .btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        width: 100%;
+        background: #5D3FD3;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #7C5FE8;
+    }
+
+    .added-item {
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .added-item-info {
+        flex: 1;
+    }
+
+    .added-item-name {
+        font-weight: 600;
+        color: #333;
+    }
+
+    .added-item-email {
+        font-size: 13px;
+        color: #666;
+    }
+
+    .btn-remove {
+        padding: 6px 12px;
+        background: #fee;
+        color: #c33;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 12px;
+    }
+
+    /* Upload Zone */
+    .upload-zone {
+        border: 3px dashed #ddd;
+        border-radius: 10px;
+        padding: 30px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: #f9f9f9;
+        margin-bottom: 20px;
+    }
+
+    .upload-zone:hover {
+        border-color: #5D3FD3;
+        background: #f5f0ff;
+    }
+
+    .upload-icon {
+        font-size: 40px;
+        margin-bottom: 10px;
+    }
+
+    .upload-text {
+        font-size: 16px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 5px;
+    }
+
+    .upload-hint {
+        font-size: 12px;
+        color: #666;
+    }
+
+    .file-list {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .file-item {
+        background: white;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border: 2px solid #eee;
+    }
+
+    .file-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .file-icon {
+        font-size: 24px;
+    }
+
+    .file-name {
+        font-weight: 600;
+        color: #333;
+        font-size: 14px;
+    }
+
+    .file-size {
+        font-size: 12px;
+        color: #666;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 30px;
+        color: #999;
+        font-size: 14px;
+    }
+</style>
+
+<script>
+    let uploadedFiles = [];
+
+    // Tab switching - NO form submission
+    function switchSettingsTab(tabName, event) {
+        event.preventDefault(); // Prevent any form submission
+       
+        // Hide all tabs
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+       
+        // Show selected tab
+        document.getElementById(tabName + 'Tab').classList.add('active');
+        event.target.classList.add('active');
+    }
+
+    // Password change
+    function handlePasswordChange(event) {
+        event.preventDefault();
+       
+        const form = event.target;
+        const newPass = form.newPassword.value;
+        const confirmPass = form.confirmPassword.value;
+
+        if (newPass !== confirmPass) {
+            alert('❌ Passwords do not match!');
+            return;
+        }
+
+        // TODO: Backend integration
+        alert('✅ Password changed successfully!');
+        form.reset();
+    }
+
+    // Add carer
+    function addCarer() {
+        const email = document.getElementById('carerEmail').value;
+        if (!email) {
+            alert('Please enter an email');
+            return;
+        }
+
+        document.getElementById('carersList').innerHTML = `
+            <div class="added-item">
+                <div class="added-item-info">
+                    <div class="added-item-name">Carer</div>
+                    <div class="added-item-email">${email}</div>
+                </div>
+                <button class="btn-remove" onclick="this.parentElement.remove()">Remove</button>
+            </div>
+        `;
+       
+        document.getElementById('carerEmail').value = '';
+        alert('✅ Carer added!');
+    }
+
+    // Add clinician
+    function addClinician() {
+        const email = document.getElementById('clinicianEmail').value;
+        if (!email) {
+            alert('Please enter an email');
+            return;
+        }
+
+        document.getElementById('cliniciansList').innerHTML = `
+            <div class="added-item">
+                <div class="added-item-info">
+                    <div class="added-item-name">Clinician</div>
+                    <div class="added-item-email">${email}</div>
+                </div>
+                <button class="btn-remove" onclick="this.parentElement.remove()">Remove</button>
+            </div>
+        `;
+       
+        document.getElementById('clinicianEmail').value = '';
+        alert('✅ Clinician added!');
+    }
+
+    // File upload
+    function handleFileUpload(event) {
+        const files = Array.from(event.target.files);
+       
+        files.forEach(file => {
+            // Validate size (10MB)
+            if (file.size > 10 * 1024 * 1024) {
+                alert(`❌ ${file.name} is too large (max 10MB)`);
+                return;
+            }
+
+            uploadedFiles.push(file);
+        });
+
+        displayUploadedFiles();
+        event.target.value = '';
+    }
+
+    function displayUploadedFiles() {
+        const fileList = document.getElementById('uploadedFilesList');
+       
+        if (uploadedFiles.length === 0) {
+            fileList.innerHTML = '<div class="empty-state">📭 No documents uploaded</div>';
+            return;
+        }
+
+        fileList.innerHTML = uploadedFiles.map((file, index) => {
+            const icon = file.type.includes('pdf') ? '📕' : '🖼️';
+            const size = (file.size / 1024).toFixed(1) + ' KB';
+           
+            return `
+                <div class="file-item">
+                    <div class="file-info">
+                        <div class="file-icon">${icon}</div>
+                        <div>
+                            <div class="file-name">${file.name}</div>
+                            <div class="file-size">${size}</div>
+                        </div>
+                    </div>
+                    <button class="btn-remove" onclick="removeUploadedFile(${index})">Remove</button>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function removeUploadedFile(index) {
+        if (confirm('Remove this file?')) {
+            uploadedFiles.splice(index, 1);
+            displayUploadedFiles();
+        }
+    }
+</script>

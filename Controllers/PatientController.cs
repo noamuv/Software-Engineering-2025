@@ -66,6 +66,41 @@ namespace Software_Engineering_2025.Controllers
             return View(patient);
         }
 
+
+
+      [HttpGet]
+      public IActionResult AccountPanel(Guid userId)
+      {
+          // Get patient info
+          var user = _context.AppUsers.Find(userId);
+          if (user == null) return NotFound();
+          return PartialView("_AccountPanel", user);
+      }
+
+
+
+      [HttpGet]
+      public IActionResult SettingsPanel(Guid userId)
+      {
+          // Get patient info
+          var user = _context.AppUsers.Find(userId);
+          if (user == null) return NotFound();
+          return PartialView("_SettingsPanel", user);
+      }
+
+       [HttpGet]
+      public IActionResult MessagesPanel(Guid userId)
+      {
+          // Get patient info
+          var user = _context.AppUsers.Find(userId);
+          if (user == null) return NotFound();
+          return PartialView("_MessagesPanel", user);
+      }
+
+    
+
+
+
       [HttpGet]
 public IActionResult GetPressureData(Guid userId, string date)
 {

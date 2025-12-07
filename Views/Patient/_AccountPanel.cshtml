@@ -17,7 +17,7 @@
 
     <div class="account-details">
         <h3>Account Information</h3>
-       
+        
         <div class="info-item">
             <label>Patient ID</label>
             <div class="info-value">@Model.CsvUserId</div>
@@ -34,7 +34,7 @@
         </div>
     </div>
 
-    <button class="btn btn-logout" onclick="logout()">
+    <button class="btn btn-logout" id="logoutBtn">
         🚪 Logout
     </button>
 </div>
@@ -151,7 +151,7 @@
         font-weight: 600;
         cursor: pointer;
         margin-top: 30px;
-        transition: background 0.3s ease;
+        transition: all 0.3s ease;
     }
 
     .btn-logout:hover {
@@ -160,9 +160,11 @@
 </style>
 
 <script>
-    function logout() {
+    function handlelogout() {
         if (confirm('Are you sure you want to logout?')) {
             window.location.href = '/Auth/Logout';
         }
     }
 </script>
+
+

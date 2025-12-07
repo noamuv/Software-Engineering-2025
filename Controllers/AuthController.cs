@@ -112,6 +112,7 @@ namespace Software_Engineering_2025.Controllers
         public IActionResult Logout()
         {
             // Clear session/cookies here
+            Console.WriteLine("User logged out.");
             return RedirectToAction("Index", "Welcome");
         }
 
