@@ -53,6 +53,20 @@
             color: #5D3FD3;
         }
 
+        .sidebar-icon.label {
+            position: absolute;
+            left: 60px;
+            background: #333;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;       
+            color: white;
+            white-space: nowrap;
+        }
+
         .sidebar-icon:hover .sidebar-icon-label {
             opacity: 1;
         }
