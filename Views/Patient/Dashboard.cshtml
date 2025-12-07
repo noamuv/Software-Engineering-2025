@@ -16,11 +16,19 @@
 <body>
     <!-- Sidebar -->
     <div class="sidebar">
-        <div class="sidebar-icon">💬</div>
-        <div class="sidebar-icon">⚙️</div>
-        <div class="sidebar-icon">👤</div>
-    </div>
+        <div class="sidebar-icon" onclick="loadPanel('messages')" id="messagesIcon">💬
+        <div class="sidebar-icon-label">Messages</div>
+        </div>
 
+        <div class="sidebar-icon" onclick="loadPanel('settings')" id="settingsIcon">⚙️
+        <div class="sidebar-icon-label">Settings</div>
+        </div>
+
+        <div class="sidebar-icon" onclick="loadPanel('account')" id="accountIcon">👤
+        <div class="sidebar-icon-label">Messages</div>
+    </div>
+    </div>
+    
     <!-- Main Content -->
     <div class="main-content">
         <!-- Logout Button -->

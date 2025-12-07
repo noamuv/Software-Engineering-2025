@@ -1,0 +1,60 @@
+@model Software_Engineering_2025.Models.AppUser
+
+<div class="panel-header">
+    Messages
+    <button class="close-btn" onclick="closePanel()">×</button>
+</div>
+
+<div class="panel-content">
+    <div class="messages-container">
+        <p style="text-align: center; color: #666; padding: 40px 20px;">
+            No messages yet.<br>
+            Messaging feature coming soon!
+        </p>
+       
+        <!-- Placeholder for future messaging -->
+        <div class="message-input">
+            <textarea placeholder="Type your message..." rows="3" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; resize: none;"></textarea>
+            <button class="btn btn-primary" style="margin-top: 10px;">Send Message</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .panel-header {
+        background: linear-gradient(135deg, #5D3FD3, #764ba2);
+        color: white;
+        padding: 25px;
+        font-size: 20px;
+        font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .close-btn {
+        background: rgba(255,255,255,0.2);
+        border: none;
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 20px;
+    }
+
+    .panel-content {
+        padding: 25px;
+    }
+
+    .btn-primary {
+        width: 100%;
+        padding: 12px;
+        background: #5D3FD3;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+</style>
