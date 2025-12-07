@@ -1,5 +1,12 @@
 @model Software_Engineering_2025.Models.AppUser
 
+
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="~/css/patient-settingspanel.css" />
+</head>
+</html>
+
 <div class="panel-header">
     Settings
     <button class="close-btn" onclick="closePanel()">×</button>
@@ -59,153 +66,6 @@
     </div>
 </div>
 
-<style>
-    .panel-header {
-        background: linear-gradient(135deg, #5D3FD3, #764ba2);
-        color: white;
-        padding: 25px;
-        font-size: 20px;
-        font-weight: 600;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .close-btn {
-        background: rgba(255,255,255,0.2);
-        border: none;
-        color: white;
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        cursor: pointer;
-        font-size: 20px;
-    }
-
-    .tabs {
-        display: flex;
-        border-bottom: 2px solid #eee;
-    }
-
-    .tab {
-        flex: 1;
-        padding: 15px;
-        background: none;
-        border: none;
-        color: #666;
-        font-weight: 600;
-        cursor: pointer;
-        border-bottom: 3px solid transparent;
-        transition: all 0.3s ease;
-    }
-
-    .tab.active {
-        color: #5D3FD3;
-        border-bottom-color: #5D3FD3;
-    }
-
-    .panel-content {
-        padding: 25px;
-    }
-
-    .tab-content {
-        display: none;
-    }
-
-    .tab-content.active {
-        display: block;
-    }
-
-    h3 {
-        font-size: 18px;
-        color: #333;
-        margin-bottom: 10px;
-    }
-
-    .subtitle {
-        color: #666;
-        font-size: 13px;
-        margin-bottom: 20px;
-    }
-
-    .form-group {
-        margin-bottom: 20px;
-    }
-
-    .form-group label {
-        display: block;
-        margin-bottom: 8px;
-        font-weight: 600;
-        color: #333;
-        font-size: 14px;
-    }
-
-    .form-group input {
-        width: 100%;
-        padding: 12px;
-        border: 2px solid #ddd;
-        border-radius: 8px;
-        font-size: 14px;
-    }
-
-    .form-group input:focus {
-        outline: none;
-        border-color: #5D3FD3;
-    }
-
-    .btn {
-        padding: 12px 24px;
-        border: none;
-        border-radius: 8px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .btn-primary {
-        width: 100%;
-        background: #5D3FD3;
-        color: white;
-    }
-
-    .btn-primary:hover {
-        background: #7C5FE8;
-    }
-
-    .added-item {
-        background: #f9f9f9;
-        padding: 15px;
-        border-radius: 8px;
-        margin-bottom: 10px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .added-item-info {
-        flex: 1;
-    }
-
-    .added-item-name {
-        font-weight: 600;
-        color: #333;
-    }
-
-    .added-item-email {
-        font-size: 13px;
-        color: #666;
-    }
-
-    .btn-remove {
-        padding: 6px 12px;
-        background: #fee;
-        color: #c33;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 12px;
-    }
-</style>
 
 <script>
     function switchTab(tabId, event) {
