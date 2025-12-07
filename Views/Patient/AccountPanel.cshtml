@@ -1,0 +1,168 @@
+@model Software_Engineering_2025.Models.AppUser
+
+<div class="panel-header">
+    Account
+    <button class="close-btn" onclick="closePanel()">×</button>
+</div>
+
+<div class="panel-content">
+    <div class="account-info">
+        <div class="account-avatar">
+            @(Model.FirstName?.Substring(0, 1) ?? "?")@(Model.LastName?.Substring(0, 1) ?? "")
+        </div>
+        <div class="account-name">@Model.FirstName @Model.LastName</div>
+        <div class="account-email">@Model.Email</div>
+        <div class="account-role">@Model.Role</div>
+    </div>
+
+    <div class="account-details">
+        <h3>Account Information</h3>
+       
+        <div class="info-item">
+            <label>Patient ID</label>
+            <div class="info-value">@Model.CsvUserId</div>
+        </div>
+
+        <div class="info-item">
+            <label>Email Address</label>
+            <div class="info-value">@Model.Email</div>
+        </div>
+
+        <div class="info-item">
+            <label>Full Name</label>
+            <div class="info-value">@Model.FirstName @Model.LastName</div>
+        </div>
+    </div>
+
+    <button class="btn btn-logout" onclick="logout()">
+        🚪 Logout
+    </button>
+</div>
+
+<style>
+    .panel-header {
+        background: linear-gradient(135deg, #5D3FD3, #764ba2);
+        color: white;
+        padding: 25px;
+        font-size: 20px;
+        font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .close-btn {
+        background: rgba(255,255,255,0.2);
+        border: none;
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 20px;
+    }
+
+    .close-btn:hover {
+        background: rgba(255,255,255,0.3);
+    }
+
+    .panel-content {
+        padding: 25px;
+    }
+
+    .account-info {
+        text-align: center;
+        padding: 20px;
+        border-bottom: 1px solid #eee;
+        margin-bottom: 20px;
+    }
+
+    .account-avatar {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #5D3FD3, #764ba2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
+        font-size: 32px;
+        color: white;
+        font-weight: 600;
+    }
+
+    .account-name {
+        font-size: 20px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 5px;
+    }
+
+    .account-email {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 10px;
+    }
+
+    .account-role {
+        display: inline-block;
+        padding: 6px 16px;
+        background: #e8e0ff;
+        color: #5D3FD3;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .account-details h3 {
+        font-size: 16px;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    .info-item {
+        margin-bottom: 20px;
+    }
+
+    .info-item label {
+        display: block;
+        font-size: 13px;
+        color: #666;
+        font-weight: 600;
+        margin-bottom: 6px;
+    }
+
+    .info-value {
+        padding: 12px;
+        background: #f5f5f5;
+        border-radius: 8px;
+        color: #333;
+        font-size: 14px;
+    }
+
+    .btn-logout {
+        width: 100%;
+        padding: 14px;
+        background: #ff4757;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 30px;
+        transition: background 0.3s ease;
+    }
+
+    .btn-logout:hover {
+        background: #ff3838;
+    }
+</style>
+
+<script>
+    function logout() {
+        if (confirm('Are you sure you want to logout?')) {
+            window.location.href = '/Auth/Logout';
+        }
+    }
+</script>
