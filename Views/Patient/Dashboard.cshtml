@@ -28,25 +28,23 @@
         <div class="sidebar-icon-label">Messages</div>
     </div>
     </div>
-    
+
+
+    <!-- Sliding Panel -->
+    <div id="slidePanel" class="slide-panel"></div>
+
     <!-- Main Content -->
     <div class="main-content">
-        <!-- Logout Button -->
-        <a href="@Url.Action("Logout", "Auth")" class="logout-btn">Logout</a>
-
-        <!-- Welcome Header -->
         <div class="header">
             <div class="welcome-text">
                 Welcome, <span class="welcome-name">@Model.FirstName @Model.LastName</span>
             </div>
-            <div class="header-subtitle">
+            <div style="margin-top: 10px; color: #666;">
                 Patient Dashboard - Last updated: @DateTime.Now.ToString("dd MMM yyyy, HH:mm")
             </div>
         </div>
 
-
-
-                @if (sessions != null && sessions.Count > 0)
+        @if (sessions != null && sessions.Count > 0)
         {
             <div class="date-selector">
                 <label>View data from:</label>
@@ -62,9 +60,9 @@
             </div>
         }
 
-        <!-- Dashboard Grid -->
-        <div class="dashboard-grid">
-            <!-- Heatmap (Left side - spans 2 rows) -->
+        
+        <!-- <div class="dashboard-grid">
+            Heatmap (Left side - spans 2 rows) 
             <div class="card heatmap-container">
                 <div class="heatmap-placeholder">
                     <h3>🔥 Pressure Heat Map</h3>
@@ -74,6 +72,7 @@
                     </p>
                 </div>
             </div>
+            -->
 
           <div class="metrics-grid" id="metricsGrid">
             <!-- Peak Pressure -->
