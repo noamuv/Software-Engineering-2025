@@ -97,7 +97,60 @@ namespace Software_Engineering_2025.Controllers
           return PartialView("_MessagesPanel", user);
       }
 
-    
+    [HttpPost]
+public IActionResult ChangePassword([FromBody] ChangePasswordRequest request)
+{
+    try
+    {
+        Console.WriteLine($"🔐 Password change request for userId: {request.UserId}");
+       
+        // Get user from database
+        var user = _context.AppUsers.Find(request.UserId);
+       
+        if (user == null)
+        {
+            Console.WriteLine("❌ User not found");
+            return NotFound(new { success = false, message = "User not found" });
+        }
+
+        // Verify current password
+        bool isCurrentPasswordCorrect = BCrypt.Net.BCrypt.Verify(request.CurrentPassword, user.PasswordHash);
+       
+        if (!isCurrentPasswordCorrect)
+        {
+            Console.WriteLine("❌ Current password incorrect");
+            return BadRequest(new { success = false, message = "Current password is incorrect" });
+        }
+
+        // Validate new password
+        if (request.NewPassword.Length < 6)
+        {
+            return BadRequest(new { success = false, message = "Password must be at least 6 characters" });
+        }
+
+        // Hash and update new password
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+        user.TemporaryPassword = null; // Clear temporary password if it exists
+       
+        _context.SaveChanges();
+       
+        Console.WriteLine("✅ Password updated successfully");
+        return Ok(new { success = true, message = "Password updated successfully" });
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"❌ Error: {ex.Message}");
+        return StatusCode(500, new { success = false, message = "Server error" });
+    }
+}
+
+// Request model
+public class ChangePasswordRequest
+{
+    public Guid UserId { get; set; }
+    public string CurrentPassword { get; set; } = string.Empty;
+    public string NewPassword { get; set; } = string.Empty;
+}
 
 
 

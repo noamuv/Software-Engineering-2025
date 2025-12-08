@@ -7,36 +7,37 @@
 
 <!-- TABS OUTSIDE ANY FORM -->
 <div class="tabs">
-    <button type="button" class="tab active" onclick="switchSettingsTab('password')">Password</button>
-    <button type="button" class="tab active" onclick="switchSettingsTab('careteam')">Care Team</button>
-    <button type="button" class="tab active" onclick="switchSettingsTab('documents')">Documents</button>
+    <button type="button" class="tab" onclick="switchSettingsTab('password')">Password</button>
+    <button type="button" class="tab" onclick="switchSettingsTab('careteam')">Care Team</button>
+    <button type="button" class="tab" onclick="switchSettingsTab('documents')">Documents</button>
 </div>
 
 <div class="panel-content">
     <!-- ===== PASSWORD TAB ===== -->
-    <div id="passwordTab" class="tab-content active">
+    <div id="passwordTab" class="tab-content">
         <h3>Change Password</h3>
         
         <!-- INDEPENDENT FORM - Only submits when button clicked -->
-        <form onsubmit="return handlePasswordChange(event)">
+        <form onsubmit="handlePasswordChange(event); return false;" autocomplete="off">
             <div class="form-group">
                 <label>Current Password</label>
-                <input type="password" name="currentPassword" required>
+                <input type="password" name="currentPassword" autocomplete="current-password"
+                required>
             </div>
             <div class="form-group">
                 <label>New Password</label>
-                <input type="password" name="newPassword" required>
+                <input type="password" name="newPassword" autocomplete="current-password" required>
             </div>
             <div class="form-group">
                 <label>Confirm Password</label>
-                <input type="password" name="confirmPassword" required>
+                <input type="password" name="confirmPassword" autocomplete="new-password" required>
             </div>
             <button type="submit" class="btn btn-primary">Update Password</button>
         </form>
     </div>
 
     <!-- ===== CARE TEAM TAB ===== -->
-    <div id="careteamTab" class="tab-content active">
+    <div id="careteamTab" class="tab-content">
         <h3>Add Carer</h3>
         <p class="subtitle">Carers can view your pressure data and monitor your health.</p>
         
@@ -64,7 +65,7 @@
     </div>
 
     <!-- ===== DOCUMENTS TAB ===== -->
-    <div id="documentsTab" class="tab-content active">
+    <div id="documentsTab" class="tab-content">
         <h3>Health Documents</h3>
         <p class="subtitle">Upload medical records, prescriptions, and test results. (Max 10MB)</p>
 
@@ -252,7 +253,7 @@
         cursor: pointer;
         font-size: 13px;
         font-weight: 600;
-        transition: transform 0.3s ease;
+        transition: background 0.3s ease;
     }
 
     .btn-remove:hover {
@@ -397,6 +398,8 @@ function switchSettingsTab(buttonElement, tabName) {
     buttonElement.classList.add('active'); 
 }
     // Password change - ONLY runs when form submitted
+
+    /*
     function handlePasswordChange(event) {
         event.preventDefault();
         console.log('🔐 Password change form submitted');
@@ -424,7 +427,89 @@ function switchSettingsTab(buttonElement, tabName) {
         
         return false; // Prevent actual form submission
     }
+    */
+function handlePasswordChange(event) {
+    event.preventDefault();
+    event.stopPropagation(); // CRITICAL: Stop event bubbling
+   
+    console.log('🔐 Password change form submitted');
+   
+    var form = event.target;
+    var currentPass = form.currentPassword.value;
+    var newPass = form.newPassword.value;
+    var confirmPass = form.confirmPassword.value;
 
+    // Frontend validation
+    if (!currentPass || !newPass || !confirmPass) {
+        alert('❌ All fields are required');
+        return false;
+    }
+
+    if (newPass !== confirmPass) {
+        alert('❌ New passwords do not match!');
+        return false;
+    }
+
+    if (newPass.length < 6) {
+        alert('❌ Password must be at least 6 characters!');
+        return false;
+    }
+
+    // Get userId from URL
+    var urlParams = new URLSearchParams(window.location.search);
+    var userId = urlParams.get('userId');
+   
+    if (!userId) {
+        alert('❌ User ID not found. Please refresh and try again.');
+        return false;
+    }
+
+    console.log('Sending password change request...');
+   
+    // Disable submit button to prevent double-click
+    var submitBtn = form.querySelector('button[type="submit"]');
+    var originalBtnText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Updating...';
+
+    // Send to backend
+    fetch('/Patient/ChangePassword', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            userId: userId,
+            currentPassword: currentPass,
+            newPassword: newPass
+        })
+    })
+    .then(function(response) {
+        console.log('Response status:', response.status);
+        return response.json();
+    })
+    .then(function(data) {
+        console.log('Response data:', data);
+       
+        if (data.success) {
+            alert('✅ Password changed successfully! You will use your new password next time you login.');
+            form.reset();
+        } else {
+            alert('❌ ' + (data.message || 'Password update failed'));
+        }
+    })
+    .catch(function(error) {
+        console.error('Error:', error);
+        alert('❌ An error occurred. Please try again.');
+    })
+    .finally(function() {
+        // Re-enable button
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalBtnText;
+    });
+
+    return false; // CRITICAL: Prevent form submission
+}
     // Add carer
     function addCarer() {
         console.log('👥 Add carer clicked');
