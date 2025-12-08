@@ -332,6 +332,556 @@
         }
     </div>
 
+
+
+    <!-- ===== DAILY MOVEMENT PLAN POPUP ===== -->
+<div id="movementPlanNotification" class="movement-notification hidden">
+    <div class="notification-preview" onclick="expandMovementPlan()">
+        <div class="notification-icon">📋</div>
+        <div class="notification-text">
+            <div class="notification-title">Daily Movement Plan</div>
+            <div class="notification-subtitle">Time to check your reminders</div>
+        </div>
+        <div class="notification-expand">→</div>
+    </div>
+</div>
+
+<div id="movementPlanModal" class="movement-modal hidden">
+    <div class="modal-overlay" onclick="closeMovementPlan()"></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <div>
+                <h2>📋 Daily Movement Plan</h2>
+                <p class="modal-subtitle">Stay active to prevent pressure ulcers</p>
+            </div>
+            <button class="modal-close" onclick="closeMovementPlan()">×</button>
+        </div>
+
+        <div class="modal-body">
+            <!-- Next Movement Timer -->
+            <div class="movement-timer">
+                <div class="timer-icon">⏰</div>
+                <div class="timer-info">
+                    <div class="timer-label">Next Move In</div>
+                    <div class="timer-countdown" id="countdownTimer">24 mins</div>
+                    <div class="timer-sublabel">(30 mins every 30 mins)</div>
+                </div>
+            </div>
+
+            <!-- Action Items -->
+            <div class="action-items">
+                <div class="action-item">
+                    <div class="action-checkbox">
+                        <input type="checkbox" id="getUp" onchange="markMovementDone(this)">
+                        <label for="getUp">Get Up and Move</label>
+                    </div>
+                    <div class="action-description">Stand up and walk for 2-3 minutes</div>
+                </div>
+
+                <div class="action-item">
+                    <div class="action-checkbox">
+                        <input type="checkbox" id="shiftWeight" onchange="markMovementDone(this)">
+                        <label for="shiftWeight">Shift Your Weight</label>
+                    </div>
+                    <div class="action-description">Lean to each side for 30 seconds</div>
+                </div>
+
+                <div class="action-item">
+                    <div class="action-checkbox">
+                        <input type="checkbox" id="checkSkin" onchange="markMovementDone(this)">
+                        <label for="checkSkin">Check Your Skin</label>
+                    </div>
+                    <div class="action-description">Look for red spots or pressure marks</div>
+                </div>
+
+                <div class="action-item">
+                    <div class="action-checkbox">
+                        <input type="checkbox" id="adjustPosition" onchange="markMovementDone(this)">
+                        <label for="adjustPosition">Adjust Your Position</label>
+                    </div>
+                    <div class="action-description">Change sitting posture to relieve pressure</div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="remindLater()">
+                    ⏱️ Remind Me Later (15 mins)
+                </button>
+                <button class="btn btn-primary" onclick="markAllDone()">
+                    ✅ Mark All as Done
+                </button>
+            </div>
+
+            <!-- Movement History -->
+            <div class="movement-history">
+                <h3>Today's Movements</h3>
+                <div class="history-timeline">
+                    <div class="history-item completed">
+                        <div class="history-time">2:30 PM</div>
+                        <div class="history-dot"></div>
+                        <div class="history-label">✅ Movement completed</div>
+                    </div>
+                    <div class="history-item completed">
+                        <div class="history-time">1:00 PM</div>
+                        <div class="history-dot"></div>
+                        <div class="history-label">✅ Movement completed</div>
+                    </div>
+                    <div class="history-item completed">
+                        <div class="history-time">11:30 AM</div>
+                        <div class="history-dot"></div>
+                        <div class="history-label">✅ Movement completed</div>
+                    </div>
+                    <div class="history-item pending">
+                        <div class="history-time">3:00 PM</div>
+                        <div class="history-dot"></div>
+                        <div class="history-label">⏰ Next scheduled</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* ===== NOTIFICATION PREVIEW ===== */
+.movement-notification {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.movement-notification.hidden {
+    transform: translateY(150px);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.notification-preview {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 10px 40px rgba(93, 63, 211, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 3px solid #5D3FD3;
+    min-width: 300px;
+}
+
+.notification-preview:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 50px rgba(93, 63, 211, 0.4);
+}
+
+.notification-icon {
+    font-size: 36px;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.notification-text {
+    flex: 1;
+}
+
+.notification-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.notification-subtitle {
+    font-size: 13px;
+    color: #666;
+}
+
+.notification-expand {
+    font-size: 24px;
+    color: #5D3FD3;
+    font-weight: bold;
+}
+
+/* ===== MODAL ===== */
+.movement-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.movement-modal.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    position: relative;
+    background: white;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 85vh;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #5D3FD3, #764ba2);
+    color: white;
+    padding: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.modal-header h2 {
+    font-size: 26px;
+    margin-bottom: 5px;
+}
+
+.modal-subtitle {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.modal-close {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    font-size: 24px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.modal-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.modal-body {
+    padding: 30px;
+    max-height: calc(85vh - 120px);
+    overflow-y: auto;
+}
+
+/* ===== MOVEMENT TIMER ===== */
+.movement-timer {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 16px;
+    padding: 25px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    color: white;
+    margin-bottom: 30px;
+}
+
+.timer-icon {
+    font-size: 48px;
+}
+
+.timer-info {
+    flex: 1;
+}
+
+.timer-label {
+    font-size: 13px;
+    opacity: 0.9;
+    margin-bottom: 5px;
+}
+
+.timer-countdown {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.timer-sublabel {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+/* ===== ACTION ITEMS ===== */
+.action-items {
+    margin-bottom: 30px;
+}
+
+.action-item {
+    background: #f9f9f9;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-left: 4px solid #5D3FD3;
+    transition: all 0.3s ease;
+}
+
+.action-item:hover {
+    background: #f0f0f0;
+    transform: translateX(5px);
+}
+
+.action-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.action-checkbox input[type="checkbox"] {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    accent-color: #5D3FD3;
+}
+
+.action-checkbox label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    cursor: pointer;
+}
+
+.action-description {
+    font-size: 14px;
+    color: #666;
+    margin-left: 36px;
+}
+
+/* ===== MODAL ACTIONS ===== */
+.modal-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.btn {
+    padding: 14px 20px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: #5D3FD3;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #7C5FE8;
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: #e0e0e0;
+    color: #333;
+}
+
+.btn-secondary:hover {
+    background: #d0d0d0;
+}
+
+/* ===== MOVEMENT HISTORY ===== */
+.movement-history h3 {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.history-timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+.history-timeline::before {
+    content: '';
+    position: absolute;
+    left: 9px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #ddd;
+}
+
+.history-item {
+    display: grid;
+    grid-template-columns: 70px 20px 1fr;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.history-time {
+    font-size: 13px;
+    color: #666;
+    font-weight: 600;
+    text-align: right;
+}
+
+.history-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #ddd;
+    position: relative;
+    z-index: 1;
+}
+
+.history-item.completed .history-dot {
+    background: #5D3FD3;
+}
+
+.history-item.pending .history-dot {
+    background: #ffc107;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+
+.history-label {
+    font-size: 14px;
+    color: #333;
+}
+
+.history-item.pending .history-label {
+    font-weight: 600;
+    color: #f39c12;
+}
+</style>
+
+<script>
+    // Show notification after 5 seconds
+    setTimeout(function() {
+        var notification = document.getElementById('movementPlanNotification');
+        notification.classList.remove('hidden');
+        console.log('📋 Movement plan notification shown');
+    }, 5000);
+
+    // Expand to full modal
+    function expandMovementPlan() {
+        var notification = document.getElementById('movementPlanNotification');
+        var modal = document.getElementById('movementPlanModal');
+       
+        notification.classList.add('hidden');
+        modal.classList.remove('hidden');
+       
+        console.log('📋 Movement plan expanded');
+        startCountdown();
+    }
+
+    // Close modal
+    function closeMovementPlan() {
+        var modal = document.getElementById('movementPlanModal');
+        modal.classList.add('hidden');
+        console.log('📋 Movement plan closed');
+    }
+
+    // Countdown timer
+    function startCountdown() {
+        var minutes = 24;
+        var timerElement = document.getElementById('countdownTimer');
+       
+        var countdown = setInterval(function() {
+            minutes--;
+            timerElement.textContent = minutes + ' mins';
+           
+            if (minutes <= 0) {
+                clearInterval(countdown);
+                timerElement.textContent = 'Time to move!';
+                // Could trigger notification sound here
+            }
+        }, 60000); // Update every minute
+    }
+
+    // Mark movement as done
+    function markMovementDone(checkbox) {
+        if (checkbox.checked) {
+            var item = checkbox.closest('.action-item');
+            item.style.background = '#e8ffe8';
+            item.style.borderLeftColor = '#4caf50';
+            console.log('✅ Movement marked as done');
+        } else {
+            var item = checkbox.closest('.action-item');
+            item.style.background = '#f9f9f9';
+            item.style.borderLeftColor = '#5D3FD3';
+        }
+    }
+
+    // Mark all as done
+    function markAllDone() {
+        var checkboxes = document.querySelectorAll('.action-checkbox input[type="checkbox"]');
+        checkboxes.forEach(function(checkbox) {
+            checkbox.checked = true;
+            markMovementDone(checkbox);
+        });
+       
+        alert('✅ Great job! All movements marked as complete.');
+       
+        // Close modal after 1 second
+        setTimeout(function() {
+            closeMovementPlan();
+        }, 1500);
+    }
+
+    // Remind later
+    function remindLater() {
+        alert('⏰ Reminder set for 15 minutes from now.');
+        closeMovementPlan();
+       
+        // Show notification again in 15 minutes
+        setTimeout(function() {
+            var notification = document.getElementById('movementPlanNotification');
+            notification.classList.remove('hidden');
+        }, 900000); // 15 minutes = 900000 milliseconds
+    }
+</script>
+
     <script>
         let currentPanel = null;
 
