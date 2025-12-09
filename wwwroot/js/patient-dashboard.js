@@ -1,4 +1,48 @@
-  // Show notification after 5 seconds
+
+// Patient Dashboard JavaScript
+console.log('🩺 Patient Dashboard JS Loaded');
+var currentPanel = null;
+
+        // Load panel content via AJAX
+          function loadPanel(panelType) {
+            const panel = document.getElementById('slidePanel');
+            const icons = document.querySelectorAll('.sidebar-icon');
+            
+            // If clicking same panel, close it
+            if (currentPanel === panelType && panel.classList.contains('open')) {
+                panel.classList.remove('open');
+                icons.forEach(icon => icon.classList.remove('active'));
+                currentPanel = null;
+                return;
+            }
+
+            // Mark icon as active
+            icons.forEach(icon => icon.classList.remove('active'));
+            document.getElementById(panelType + 'Icon').classList.add('active');
+
+            // Load content
+            fetch(`/Patient/${panelType.charAt(0).toUpperCase() + panelType.slice(1)}Panel?userId=@Model.Id`)
+                .then(response => response.text())
+                .then(html => {
+                    panel.innerHTML = html;
+                    panel.classList.add('open');
+                    currentPanel = panelType;
+                })
+                .catch(error => {
+                    console.error('Error loading panel:', error);
+                    alert('Failed to load panel');
+                });
+        }
+
+        // Close panel (called from within partial views)
+        function closePanel() {
+            const panel = document.getElementById('slidePanel');
+            panel.classList.remove('open');
+            document.querySelectorAll('.sidebar-icon').forEach(icon => icon.classList.remove('active'));
+            currentPanel = null;
+        }
+
+        // Show movement plan notification after 5 seconds
     setTimeout(function() {
         var notification = document.getElementById('movementPlanNotification');
         notification.classList.remove('hidden');
@@ -83,43 +127,4 @@
         }, 900000); // 15 minutes = 900000 milliseconds
     }
 
-       let currentPanel = null;
-
-        // Load panel content via AJAX
-        function loadPanel(panelType) {
-            const panel = document.getElementById('slidePanel');
-            const icons = document.querySelectorAll('.sidebar-icon');
-            
-            // If clicking same panel, close it
-            if (currentPanel === panelType && panel.classList.contains('open')) {
-                panel.classList.remove('open');
-                icons.forEach(icon => icon.classList.remove('active'));
-                currentPanel = null;
-                return;
-            }
-
-            // Mark icon as active
-            icons.forEach(icon => icon.classList.remove('active'));
-            document.getElementById(panelType + 'Icon').classList.add('active');
-
-            // Load content
-            fetch(`/Patient/${panelType.charAt(0).toUpperCase() + panelType.slice(1)}Panel?userId=@Model.Id`)
-                .then(response => response.text())
-                .then(html => {
-                    panel.innerHTML = html;
-                    panel.classList.add('open');
-                    currentPanel = panelType;
-                })
-                .catch(error => {
-                    console.error('Error loading panel:', error);
-                    alert('Failed to load panel');
-                });
-        }
-
-        // Close panel (called from within partial views)
-        function closePanel() {
-            const panel = document.getElementById('slidePanel');
-            panel.classList.remove('open');
-            document.querySelectorAll('.sidebar-icon').forEach(icon => icon.classList.remove('active'));
-            currentPanel = null;
-        }
+   
