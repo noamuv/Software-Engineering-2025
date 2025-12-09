@@ -126,5 +126,3 @@ var currentPanel = null;
             notification.classList.remove('hidden');
         }, 900000); // 15 minutes = 900000 milliseconds
     }
-
-   
