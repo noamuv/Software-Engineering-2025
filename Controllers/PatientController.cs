@@ -47,15 +47,16 @@ namespace Software_Engineering_2025.Controllers
 
             // Get latest session by default
             var latestSession = sessions.First();
-            
+
+            ViewBag.MatrixJson = latestSession.MatrixJson;            
             // Deserialize matrix for heat map
-            var matrix = _csvImport.DeserializeMatrix(latestSession.MatrixJson);
+            //var matrix = _csvImport.DeserializeMatrix(latestSession.MatrixJson);
 
             // Pass data to view
-            ViewBag.Patient = patient;
+            //ViewBag.Patient = patient;
             ViewBag.AvailableSessions = sessions; // All dates
             ViewBag.CurrentSession = latestSession; // Currently displayed
-            ViewBag.Matrix = matrix;
+            //ViewBag.Matrix = matrix;
             ViewBag.Metrics = new {
                 PeakPressure = latestSession.PeakPressure,
                 ContactAreaPercent = latestSession.ContactAreaPercent,
