@@ -8,8 +8,13 @@ using System.Globalization;
 
 namespace Software_Engineering_2025.Services
 {
+    // Service for importing CSV files containing pressure data
     public class CsvImportService
     {
+        // Database context
+        /* This service requires ApplicationDbContext to interact with the database 
+        because it needs to check for existing records and save new pressure session data.*/
+
         private readonly ApplicationDbContext _context;
 
         public CsvImportService(ApplicationDbContext context)
@@ -17,19 +22,24 @@ namespace Software_Engineering_2025.Services
             _context = context;
         }
 
-        // For each patient all their CSV files in a folder
+        // Import all CSV files from a folder
+
         public void ImportCsvFolder(string folderPath)
         {
+            // Get all CSV files in the specified folder
             var csvFiles = Directory.GetFiles(folderPath, "*.csv");
             
             Console.WriteLine($"Found {csvFiles.Length} CSV files to import");
 
+            // Process each file
             foreach (var csvFile in csvFiles)
             {
+                // Import single CSV file
                 try
                 {
                     ImportSingleCsv(csvFile);
                 }
+                // Catch any exceptions to prevent one bad file from stopping the whole import
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Error importing {Path.GetFileName(csvFile)}: {ex.Message}");
@@ -40,16 +50,20 @@ namespace Software_Engineering_2025.Services
         // Import a single CSV file
         public void ImportSingleCsv(string filePath)
         {
-            // Parse filename: "1c0fd777_20251011.csv"
+            // Extract patient ID and date from filename
+            // Expected format: PatientUserId_YYYYMMDD.csv
             var fileName = Path.GetFileNameWithoutExtension(filePath);
             var parts = fileName.Split('_');
             
+            // Validate filename format
             if (parts.Length != 2)
             {
                 Console.WriteLine($"Skipping invalid filename: {fileName}");
                 return;
             }
-
+            
+            // Extract patient ID and date
+            // Example: "patient123_20231015" -> patientUserId = "patient123", dateString = "20231015"
             string patientUserId = parts[0];
             string dateString = parts[1];
 
@@ -61,7 +75,10 @@ namespace Software_Engineering_2025.Services
                 return;
             }
 
-            // Check if already imported
+            /* Check if already imported
+            If a session for this patient and date already exists, skip import
+             This prevents duplicate entries
+             */
             if (_context.PressureSessions.Any(p => 
                 p.PatientUserId == patientUserId && 
                 p.RecordedDate.Date == recordedDate.Date))
@@ -72,7 +89,8 @@ namespace Software_Engineering_2025.Services
 
             // Parse CSV into matrix
             var matrix = ParseCsvToMatrix(filePath);
-
+            /* The for loop iterates through each element of the 32x32 matrix
+             to determine the maximum pressure value present in the data.*/
             int maxValueInMatrix = 0;
             for (int i = 0; i < 32; i++)
             {
@@ -85,7 +103,7 @@ namespace Software_Engineering_2025.Services
                 }
             }
             
-            // Calculate metrics
+            // Using the matrix, metrics are calculated by calling the CalculateMetrics method
             var metrics = matrix.CalculateMetrics();
 
             // Debug output
@@ -94,17 +112,17 @@ namespace Software_Engineering_2025.Services
             // Create session record
             var session = new PressureSession
             {
-                Id = Guid.NewGuid(),
-                PatientUserId = patientUserId,
-                RecordedDate = recordedDate,
-                MatrixJson = SerializeMatrix(matrix.Data),
-                PeakPressure = metrics.PeakPressure,
-                ContactAreaPercent = metrics.ContactAreaPercent,
-                CoefficientOfVariation = metrics.CoefficientOfVariation,
-                RiskScore = metrics.RiskScore,
-                ImportedAt = DateTime.UtcNow
+                Id = Guid.NewGuid(),      // Unique identifier
+                PatientUserId = patientUserId,  // Patient ID from filename
+                RecordedDate = recordedDate,     // Date from filename
+                MatrixJson = SerializeMatrix(matrix.Data),   // Serialize matrix to JSON
+                PeakPressure = metrics.PeakPressure,       // Calculated peak pressure
+                ContactAreaPercent = metrics.ContactAreaPercent,   // Calculated contact area percentage
+                CoefficientOfVariation = metrics.CoefficientOfVariation,  // Calculated coefficient of variation
+                RiskScore = metrics.RiskScore,        // Calculated risk score
+                ImportedAt = DateTime.UtcNow       // Timestamp of import
             };
-
+            // Save to database
             _context.PressureSessions.Add(session);
             _context.SaveChanges();
 
@@ -112,8 +130,13 @@ namespace Software_Engineering_2025.Services
         }
 
         // This method reads the CSV and converts it to a PressureMatrix
+        // It also handles capping values above 255
+        // It is converted  to a matrix becuase the PressureMatrix class contains useful methods for analysis such as CalculateMetrics
+        // a matrix representation is more suitable for these operations than a flat JSON string
         private PressureMatrix ParseCsvToMatrix(string filePath)
         {
+            /* Initialize a new PressureMatrix
+             Read all lines from the CSV file */
             var matrix = new PressureMatrix();
             var lines = File.ReadAllLines(filePath);
 
@@ -121,8 +144,11 @@ namespace Software_Engineering_2025.Services
             // This assumes CSV has at least 32 lines and 32 values per line
             for (int row = 0; row < Math.Min(32, lines.Length); row++)
             {
+                // Assumes comma as delimiter
                 var values = lines[row].Split(',');
 
+                /* Uses only the first 32 values in each line
+                 Parses each value and populates the matrix */
                 for (int col = 0; col < Math.Min(32, values.Length); col++)
                 {
                     if (int.TryParse(values[col].Trim(), out int pressure))
@@ -147,12 +173,15 @@ namespace Software_Engineering_2025.Services
         }
 
         // This method serializes the 32x32 matrix to JSON
+        // Why serialize? Storing as JSON simplifies database storage and retrieval
         private string SerializeMatrix(int[,] matrix)
         {
             // Converts 2D array to jagged array for JSON serialization
             int[][] jaggedArray = new int[32][];
             for (int i = 0; i < 32; i++)
             {
+                /* Initialize each row of the jagged array
+                 Copy values from the 2D array to the jagged array */
                 jaggedArray[i] = new int[32];
                 for (int j = 0; j < 32; j++)
                 {
@@ -163,7 +192,9 @@ namespace Software_Engineering_2025.Services
             return JsonSerializer.Serialize(jaggedArray);
         }
 
-        // This Deserializes JSON to matrix
+        /*This Deserializes JSON to matrix because it may be needed elsewhere
+         why deserialize after serialize? To enable further analysis 
+         or processing of the pressure data after retrieval from the database */
         public int[,] DeserializeMatrix(string json)
         {
             var jaggedArray = JsonSerializer.Deserialize<int[][]>(json);

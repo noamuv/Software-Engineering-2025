@@ -4,16 +4,16 @@ console.log('🚀 patient-dashboard.js loading...');
 
 // ===== HEATMAP =====
 function drawHeatmap(matrixData) {
-    console.log('🔥 drawHeatmap called');
+    console.log('drawHeatmap called');
     console.log('Matrix data:', matrixData);
    
     const canvas = document.getElementById('pressureHeatmap');
     if (!canvas) {
-        console.error('❌ Canvas element not found!');
+        console.error('Canvas element not found!');
         return;
     }
    
-    console.log('✅ Canvas found:', canvas);
+    console.log('Canvas found:', canvas);
    
     const ctx = canvas.getContext('2d');
     const cellSize = 12.5; // 400px / 32 = 12.5px per cell
@@ -50,17 +50,24 @@ function getPressureColor(value) {
 var trendData = { dates: [], peakPressure: [], contactArea: [], riskScore: [] };
 var currentMetric = 'peakPressure';
 
+// Load trend data from sessions
 function loadTrendData(sessions) {
     console.log('📊 loadTrendData called');
     console.log('Sessions:', sessions);
    
+    // Sort sessions by date
     sessions.sort((a, b) => new Date(a.RecordedDate) - new Date(b.RecordedDate));
    
+    /*  The trendData.dates will hold formatted dates for the x-axis
+        The other arrays will hold corresponding metric values */
+
     trendData.dates = sessions.map(s => {
         const d = new Date(s.RecordedDate);
-        return (d.getMonth() + 1) + '/' + d.getDate();
+        return (d.getMonth() + 1) + '/' + d.getDate(); // MM/DD format
     });
-   
+
+    // Extract metrics, assuming session has PeakPressure, ContactAreaPercent, RiskScore
+
     trendData.peakPressure = sessions.map(s => s.PeakPressure);
     trendData.contactArea = sessions.map(s => s.ContactAreaPercent);
     trendData.riskScore = sessions.map(s => s.RiskScore);
@@ -70,9 +77,11 @@ function loadTrendData(sessions) {
     drawTrendGraph();
 }
 
+// Draw trend graph
 function drawTrendGraph() {
     console.log('📈 drawTrendGraph called');
    
+    // Get canvas element
     const canvas = document.getElementById('trendGraph');
     if (!canvas) {
         console.error('❌ Graph canvas not found!');
@@ -81,98 +90,101 @@ function drawTrendGraph() {
    
     console.log('✅ Graph canvas found');
    
-    const ctx = canvas.getContext('2d');
-    const padding = 50;
-    const width = canvas.width - padding * 2;
-    const height = canvas.height - padding * 2;
+    const ctx = canvas.getContext('2d'); // 2D context is used for drawing
+    const padding = 50;  // Padding around the graph area
+    const width = canvas.width - padding * 2; // Graph width
+    const height = canvas.height - padding * 2; // Graph height
    
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear previous drawings
    
-    const data = trendData[currentMetric];
-    const labels = trendData.dates;
+    const data = trendData[currentMetric]; // Get data for the selected metric
+    const labels = trendData.dates; // X-axis labels (dates)
    
     if (!data || data.length === 0) {
-        ctx.fillStyle = '#666';
-        ctx.font = '14px Arial';
+        ctx.fillStyle = '#666'; // Gray color for text
+        ctx.font = '14px Arial'; // Font settings
         ctx.textAlign = 'center';
-        ctx.fillText('No data available', canvas.width / 2, canvas.height / 2);
+        ctx.fillText('No data available', canvas.width / 2, canvas.height / 2); // Centered message
         return;
     }
    
-    const maxValue = Math.max(...data) * 1.1;
+    const maxValue = Math.max(...data) * 1.1; // Max value for scaling with 10% padding
    
     // Axes
-    ctx.strokeStyle = '#333';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(padding, padding);
-    ctx.lineTo(padding, canvas.height - padding);
-    ctx.lineTo(canvas.width - padding, canvas.height - padding);
-    ctx.stroke();
+    ctx.strokeStyle = '#333';  // Dark gray for axes
+    ctx.lineWidth = 2;   // Thicker lines for axes
+    ctx.beginPath(); // Y-axis
+    ctx.moveTo(padding, padding); // X-axis
+    ctx.lineTo(padding, canvas.height - padding); // Y-axis
+    ctx.lineTo(canvas.width - padding, canvas.height - padding); // X-axis
+    ctx.stroke(); // Draw axes
    
     // Grid lines
-    ctx.strokeStyle = '#e0e0e0';
-    ctx.lineWidth = 1;
-    for (let i = 0; i <= 5; i++) {
-        const y = padding + (height / 5) * i;
-        ctx.beginPath();
-        ctx.moveTo(padding, y);
-        ctx.lineTo(canvas.width - padding, y);
-        ctx.stroke();
+    ctx.strokeStyle = '#e0e0e0'; // Light gray for grid
+    ctx.lineWidth = 1; // Thinner lines for grid
+    for (let i = 0; i <= 5; i++) { // For loop to draw horizontal grid lines
+        const y = padding + (height / 5) * i; // Calculate y position
+        ctx.beginPath();  // Start new path for each line
+        ctx.moveTo(padding, y); // Move to left edge
+        ctx.lineTo(canvas.width - padding, y); // Draw to right edge
+        ctx.stroke(); // Draw the line
        
-        const value = maxValue - (maxValue / 5) * i;
-        ctx.fillStyle = '#666';
-        ctx.font = '11px Arial';
-        ctx.textAlign = 'right';
-        ctx.fillText(Math.round(value), padding - 5, y + 4);
+        // Y-axis labels
+        const value = maxValue - (maxValue / 5) * i; // Calculate label value
+        ctx.fillStyle = '#666'; // Gray color for text
+        ctx.font = '11px Arial'; // Font settings
+        ctx.textAlign = 'right'; // Right align for Y-axis labels
+        ctx.fillText(Math.round(value), padding - 5, y + 4); // Draw label
     }
    
     // Data line
-    ctx.strokeStyle = '#5D3FD3';
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-   
-    for (let i = 0; i < data.length; i++) {
-        const x = padding + (width / (data.length - 1)) * i;
-        const y = canvas.height - padding - (data[i] / maxValue) * height;
+    ctx.strokeStyle = '#5D3FD3'; // Purple line for data
+    ctx.lineWidth = 3; // Thicker line for data
+    ctx.beginPath(); // Start path for data line
+    
+    for (let i = 0; i < data.length; i++) {  // Loop through data points
+        const x = padding + (width / (data.length - 1)) * i; // X position on the graph
+        const y = canvas.height - padding - (data[i] / maxValue) * height; // Y position on the graph
        
-        if (i === 0) {
-            ctx.moveTo(x, y);
+        if (i === 0) { 
+            ctx.moveTo(x, y); // Move to first data point
         } else {
-            ctx.lineTo(x, y);
+            ctx.lineTo(x, y); // Draw line to next data point
         }
     }
     ctx.stroke();
    
-    // Points
-    for (let i = 0; i < data.length; i++) {
-        const x = padding + (width / (data.length - 1)) * i;
-        const y = canvas.height - padding - (data[i] / maxValue) * height;
+    // This is for data points and labels
+    for (let i = 0; i < data.length; i++) { // Loop through data points
+        const x = padding + (width / (data.length - 1)) * i; // X position
+        const y = canvas.height - padding - (data[i] / maxValue) * height; // Y position
        
-        ctx.fillStyle = '#5D3FD3';
-        ctx.beginPath();
-        ctx.arc(x, y, 4, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.fillStyle = '#5D3FD3'; // Purple fill for data points
+        ctx.beginPath();  // Data point circle
+        ctx.arc(x, y, 4, 0, Math.PI * 2); // Circle at data point
+        ctx.fill(); // Draw data point
        
         // Labels
-        ctx.fillStyle = '#666';
-        ctx.font = '10px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText(labels[i], x, canvas.height - padding + 15);
+        ctx.fillStyle = '#666'; // Gray color for text
+        ctx.font = '10px Arial'; // Font settings
+        ctx.textAlign = 'center'; // Center align for X-axis labels
+        ctx.fillText(labels[i], x, canvas.height - padding + 15); // Draw label
     }
    
     console.log('✅ Graph drawn successfully');
 }
-
-function showMetric(metric) {
-    console.log('Switching to metric:', metric);
-    currentMetric = metric;
+// Switch metric
+    function showMetric(metric) {
+    console.log('Switching to metric:', metric); // Log the metric being switched to
+    currentMetric = metric; // Update current metric
    
+    // Update button styles
     document.querySelectorAll('.graph-btn').forEach(btn => {
-        btn.classList.remove('active');
+        btn.classList.remove('active'); // Remove active class from all buttons
     });
-    document.querySelector('[data-metric="' + metric + '"]').classList.add('active');
+    document.querySelector('[data-metric="' + metric + '"]').classList.add('active'); // Add active class to selected button
    
+    // Redraw graph with new metric
     drawTrendGraph();
 }
 
@@ -222,12 +234,12 @@ var currentPanel = null;
     setTimeout(function() {
         var notification = document.getElementById('movementPlanNotification');
         notification.classList.remove('hidden');
-        console.log('📋 Movement plan notification shown');
+        console.log(' Movement plan notification shown');
     }, 5000);
 
 // ===== INITIALIZE =====
 window.addEventListener('load', function() {
-    console.log('🎨 Window loaded, initializing...');
+    console.log('Window loaded, initializing...');
    
     const matrixEl = document.getElementById('matrixData');
     const sessionsEl = document.getElementById('sessionsData');
@@ -241,10 +253,10 @@ window.addEventListener('load', function() {
             console.log('Matrix parsed successfully, size:', matrix.length);
             drawHeatmap(matrix);
         } catch (e) {
-            console.error('❌ Error parsing matrix:', e);
+            console.error('Error parsing matrix:', e);
         }
     } else {
-        console.error('❌ matrixData element not found!');
+        console.error('matrixData element not found!');
     }
    
     if (sessionsEl) {
@@ -253,14 +265,14 @@ window.addEventListener('load', function() {
             console.log('Sessions parsed successfully, count:', sessions.length);
             loadTrendData(sessions);
         } catch (e) {
-            console.error('❌ Error parsing sessions:', e);
+            console.error(' Error parsing sessions:', e);
         }
     } else {
-        console.error('❌ sessionsData element not found!');
+        console.error('sessionsData element not found!');
     }
 });
 
-console.log('✅ patient-dashboard.js loaded');
+console.log('patient-dashboard.js loaded');
 
 
 

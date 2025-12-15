@@ -6,17 +6,75 @@
     <button class="close-btn" onclick="closePanel()">×</button>
 </div>
 
-<div class="panel-content">
-    <div class="messages-container">
-        <p style="text-align: center; color: #666; padding: 40px 20px;">
-            No messages yet.<br>
-            Messaging feature coming soon!
-        </p>
-       
-        <!-- Placeholder for future messaging -->
-        <div class="message-input">
-            <textarea placeholder="Type your message..." rows="3" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; resize: none;"></textarea>
-            <button class="btn btn-primary" style="margin-top: 10px;">Send Message</button>
+
+<div class="messages-container">
+    <!-- Left sidebar with contacts -->
+    <div class="messages-sidebar">
+        <div class="messages-search">
+            <input type="text" id="messageSearch" placeholder="🔍 Search messages..." class="search-input">
+        </div>
+        
+        <div class="contacts-list">
+            <!-- Sensore AI Contact -->
+            <div class="contact-item active" data-contact="sensore-ai" onclick="selectContact('sensore-ai')">
+                <div class="contact-avatar ai-avatar">🤖</div>
+                <div class="contact-info">
+                    <div class="contact-name">Sensore AI</div>
+                    <div class="contact-preview">Ask me anything...</div>
+                </div>
+                <div class="contact-time">Now</div>
+            </div>
+            
+            <!-- Dr. Nshmoud Contact -->
+            <div class="contact-item" data-contact="dr-nshmoud" onclick="selectContact('dr-nshmoud')">
+                <div class="contact-avatar">👨‍⚕️</div>
+                <div class="contact-info">
+                    <div class="contact-name">Dr. Nshmoud</div>
+                    <div class="contact-preview">I think I've just looked over your reports and it all looks good!</div>
+                </div>
+                <div class="contact-time">10:02</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Right chat area -->
+    <div class="messages-chat-area">
+        <div class="chat-header">
+            <div class="chat-header-info">
+                <div class="chat-avatar" id="chatAvatar">🤖</div>
+                <div>
+                    <div class="chat-name" id="chatName">Sensore AI</div>
+                    <div class="chat-status" id="chatStatus">Online</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="messages-display" id="messagesDisplay">
+            <div class="message-group sensore-ai-messages">
+                <div class="message received">
+                    <div class="message-avatar">🤖</div>
+                    <div class="message-content">
+                        <div class="message-text">Hello! I'm Sensore AI, your intelligent pressure monitoring assistant. How can I help you today?</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="message-group dr-nshmoud-messages" style="display: none;">
+                <div class="message received">
+                    <div class="message-avatar">👨‍⚕️</div>
+                    <div class="message-content">
+                        <div class="message-text">Hi! I think I've just looked over your reports and it all looks good!</div>
+                        <div class="message-time">10:02</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="message-input-area">
+            <form id="messageForm" onsubmit="sendMessage(event)">
+                <input type="text" id="messageInput" placeholder="Type a message..." class="message-input" autocomplete="off">
+                <button type="submit" class="send-button">Send Message</button>
+            </form>
         </div>
     </div>
 </div>

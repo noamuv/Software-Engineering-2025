@@ -65,6 +65,7 @@ namespace Software_Engineering_2025.Controllers
         [HttpPost]
         public IActionResult Login(string email, string password, string? role)
         {
+            
             var result = _authService.AuthenticateWithPassword(email, password);
 
             if (!result.IsSuccessful)
@@ -92,12 +93,12 @@ namespace Software_Engineering_2025.Controllers
         [HttpPost]
         public IActionResult ResetPassword(Guid userId, string newPassword, string confirmPassword)
         {
-            var ptest_result = _authService.ResetPassword(userId, newPassword, confirmPassword);
+            var result = _authService.ResetPassword(userId, newPassword, confirmPassword);
 
-            if (!ptest_result.IsSuccessful)
+            if (!result.IsSuccessful)
             {
                 ViewBag.UserId = userId;
-                ViewBag.Error = ptest_result.ErrorMessage;
+                ViewBag.Error = result.ErrorMessage;
                 return View();
             }
 

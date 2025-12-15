@@ -40,8 +40,7 @@ namespace Software_Engineering_2025.Services
         // Get the latest pressure data for a patient
         public PressureMatrix GetLatestPressureData(Guid patientId)
         {
-            // TODO: Get from database or file system
-            // For now, return sample data
+        
             return GenerateSampleData();
         }
         

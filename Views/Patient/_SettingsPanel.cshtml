@@ -1,6 +1,4 @@
 @model Software_Engineering_2025.Models.AppUser
-
-
 <html>
 <head>
     <link rel="stylesheet" href="~/css/patient-settingspanel.css" />
@@ -12,7 +10,7 @@
     <button class="close-btn" onclick="closePanel()">×</button>
 </div>
 
-<!-- TABS OUTSIDE ANY FORM -->
+<!-- Tabs-->
 <div class="tabs">
     <button type="button" class="tab active" onclick="switchSettingsTab('password')">Password</button>
     <button type="button" class="tab active" onclick="switchSettingsTab('careteam')">Care Team</button>
@@ -24,7 +22,7 @@
     <div id="passwordTab" class="tab-content active">
         <h3>Change Password</h3>
         
-        <!-- INDEPENDENT FORM - Only submits when button clicked -->
+        <!-- INDEPENDENT PASSWORD CHANGE FORM -->
         <form onsubmit="handlePasswordChange(event); return false;" autocomplete="off">
             <div class="form-group">
                 <label>Current Password</label>
@@ -48,7 +46,6 @@
         <h3>Add Carer</h3>
         <p class="subtitle">Carers can view your pressure data and monitor your health.</p>
         
-        <!-- NO FORM - Just inputs with button onclick -->
         <div class="form-group">
             <label>Carer Email</label>
             <input type="email" id="carerEmail" placeholder="carer@example.com">

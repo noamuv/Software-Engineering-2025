@@ -97,20 +97,21 @@ namespace Software_Engineering_2025.Controllers
           if (user == null) return NotFound();
           return PartialView("_MessagesPanel", user);
       }
-
+    // CHANGE PASSWORD
     [HttpPost]
-public IActionResult ChangePassword([FromBody] ChangePasswordRequest request)
-{
+     public IActionResult ChangePassword([FromBody] ChangePasswordRequest request)
+    {
     try
     {
-        Console.WriteLine($"🔐 Password change request for userId: {request.UserId}");
+        // Log request
+        Console.WriteLine($"Password change request for userId: {request.UserId}");
        
-        // Get user from database
+        // Get user from database context
         var user = _context.AppUsers.Find(request.UserId);
        
         if (user == null)
         {
-            Console.WriteLine("❌ User not found");
+            Console.WriteLine(" User not found");
             return NotFound(new { success = false, message = "User not found" });
         }
 
@@ -119,7 +120,7 @@ public IActionResult ChangePassword([FromBody] ChangePasswordRequest request)
        
         if (!isCurrentPasswordCorrect)
         {
-            Console.WriteLine("❌ Current password incorrect");
+            Console.WriteLine(" Current password incorrect");
             return BadRequest(new { success = false, message = "Current password is incorrect" });
         }
 
@@ -135,12 +136,12 @@ public IActionResult ChangePassword([FromBody] ChangePasswordRequest request)
        
         _context.SaveChanges();
        
-        Console.WriteLine("✅ Password updated successfully");
+        Console.WriteLine(" Password updated successfully");
         return Ok(new { success = true, message = "Password updated successfully" });
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"❌ Error: {ex.Message}");
+        Console.WriteLine($"Error: {ex.Message}");
         return StatusCode(500, new { success = false, message = "Server error" });
     }
 }

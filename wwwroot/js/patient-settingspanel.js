@@ -1,31 +1,6 @@
-   console.log('⚙️ Settings panel loaded');
+   console.log('Settings panel loaded');
 
     let uploadedFiles = [];
-
-    // Tab switching - CRITICAL: No form submission!
-   /* function switchSettingsTab(tabName) {
-        console.log('🔄 Switching to tab:', tabName);
-        
-        // Hide all tab contents
-        const allTabs = document.querySelectorAll('.tab-content');
-        allTabs.forEach(tab => tab.classList.remove('active'));
-        
-        // Remove active from all tab buttons
-        const allButtons = document.querySelectorAll('.tab');
-        allButtons.forEach(btn => btn.classList.remove('active'));
-        
-        // Show selected tab content
-        const selectedTab = document.getElementById(tabName + 'Tab');
-        if (selectedTab) {
-            selectedTab.classList.add('active');
-        }
-        
-        // Mark button as active
-        event.target.classList.add('active');
-        
-        console.log('✅ Switched to', tabName);
-    }
-*/
 
 function switchSettingsTab(buttonElement, tabName) {
     // 1. Hide all tab contents
@@ -40,70 +15,41 @@ function switchSettingsTab(buttonElement, tabName) {
         allTabButtons[j].classList.remove('active');
     }
     
-    // 3. Show selected tab content (makes it appear)
+    // 3. Show selected tab content 
     var selectedTab = document.getElementById(tabName + 'Tab');
     if (selectedTab) {
         selectedTab.classList.add('active'); 
     }
     
-    // 4. Mark the clicked button as active (underlines it)
+    // 4. Mark the clicked button as active
     buttonElement.classList.add('active'); 
 }
-    // Password change - ONLY runs when form submitted
 
-    /*
-    function handlePasswordChange(event) {
-        event.preventDefault();
-        console.log('🔐 Password change form submitted');
-        
-        const form = event.target;
-        const currentPass = form.currentPassword.value;
-        const newPass = form.newPassword.value;
-        const confirmPass = form.confirmPassword.value;
-
-        // Validation
-        if (newPass !== confirmPass) {
-            alert('❌ New passwords do not match!');
-            return false;
-        }
-
-        if (newPass.length < 6) {
-            alert('❌ Password must be at least 6 characters!');
-            return false;
-        }
-
-        // TODO: Backend integration
-        console.log('✅ Password validation passed');
-        alert('✅ Password changed successfully!\n(Backend integration pending)');
-        form.reset();
-        
-        return false; // Prevent actual form submission
-    }
-    */
-function handlePasswordChange(event) {
-    event.preventDefault();
-    event.stopPropagation(); // CRITICAL: Stop event bubbling
+// Handle password change form submission
+  function handlePasswordChange(event) {
+    event.preventDefault();  // Prevent default form submission
+    event.stopPropagation();  // Stop event bubbling
    
     console.log('🔐 Password change form submitted');
    
-    var form = event.target;
-    var currentPass = form.currentPassword.value;
-    var newPass = form.newPassword.value;
-    var confirmPass = form.confirmPassword.value;
+    var form = event.target;  // The form element
+    var currentPass = form.currentPassword.value; // Get current password
+    var newPass = form.newPassword.value; // Get new password
+    var confirmPass = form.confirmPassword.value; // Get confirm password
 
     // Frontend validation
-    if (!currentPass || !newPass || !confirmPass) {
-        alert('❌ All fields are required');
+    if (!currentPass || !newPass || !confirmPass) { // Check for empty fields
+        alert(' All fields are required');
         return false;
     }
 
-    if (newPass !== confirmPass) {
-        alert('❌ New passwords do not match!');
+    if (newPass !== confirmPass) {     // Check new password match
+        alert(' New passwords do not match!');
         return false;
     }
 
     if (newPass.length < 6) {
-        alert('❌ Password must be at least 6 characters!');
+        alert(' Password must be at least 6 characters!');
         return false;
     }
 
@@ -211,10 +157,11 @@ function handlePasswordChange(event) {
 
         // Add to UI
         const cliniciansList = document.getElementById('cliniciansList');
+        // Clear previous entries
         cliniciansList.innerHTML = `
             <div class="added-item">
                 <div class="added-item-info">
-                    <div class="added-item-name">Clinician</div>
+                    <div class="added-item-name">Clinician</div> // Placeholder name
                     <div class="added-item-email">${email}</div>
                 </div>
                 <button type="button" class="btn-remove" onclick="this.parentElement.remove()">Remove</button>
@@ -228,43 +175,50 @@ function handlePasswordChange(event) {
 
     // File upload
     function handleFileUpload(event) {
-        console.log('📄 File upload triggered');
+        console.log(' File upload triggered');
         const files = Array.from(event.target.files);
         
         files.forEach(file => {
             // Validate size (10MB)
             if (file.size > 10 * 1024 * 1024) {
-                alert(`❌ ${file.name} is too large (max 10MB)`);
+                alert(` ${file.name} is too large (max 10MB)`);
                 return;
             }
 
-            // Validate type
+            // Validatefile  type
             const validTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
             if (!validTypes.includes(file.type)) {
-                alert(`❌ ${file.name} is not a supported file type`);
+                alert(` ${file.name} is not a supported file type`);
                 return;
             }
 
             uploadedFiles.push(file);
-            console.log('✅ File added:', file.name);
+            console.log(' File added:', file.name);
         });
+    
+        // Update UI
 
         displayUploadedFiles();
         event.target.value = ''; // Reset input
     }
 
+    // Display uploaded files
     function displayUploadedFiles() {
         const fileList = document.getElementById('uploadedFilesList');
         
+ 
+        //  This will clear the list and repopulate it
         if (uploadedFiles.length === 0) {
             fileList.innerHTML = '<div class="empty-state">📭 No documents uploaded</div>';
             return;
         }
-
+        
+        // Populate list by mapping over uploadedFiles
         fileList.innerHTML = uploadedFiles.map((file, index) => {
             const icon = getFileIcon(file.type);
             const size = formatFileSize(file.size);
             
+            // Return HTML for each file
             return `
                 <div class="file-item">
                     <div class="file-info">
@@ -284,7 +238,7 @@ function handlePasswordChange(event) {
         if (confirm('Remove this file?')) {
             uploadedFiles.splice(index, 1);
             displayUploadedFiles();
-            console.log('✅ File removed');
+            console.log('File removed');
         }
     }
 

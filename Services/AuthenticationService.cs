@@ -83,10 +83,8 @@ namespace Software_Engineering_2025.Services
             user.TemporaryPassword = null;
             user.RequiresPasswordReset = false;
 
-
             // Save changes to database
             _context.SaveChanges();
-
             return AuthenticationResult.Success(user);
         }
 

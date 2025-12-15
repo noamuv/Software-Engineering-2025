@@ -1,6 +1,9 @@
-@using Newtonsoft.Json
-@model Software_Engineering_2025.Models.AppUser
+@using Newtonsoft.Json  // For JSON serialization
+@model Software_Engineering_2025.Models.AppUser  // Patient user model
 
+<!-- Patient Dashboard View
+     Displays patient information, pressure data visualizations, and metrics.
+     Utilizes ViewBag to pass sessions and metrics data from the controller. -->
 @{
     Layout = null;
     var sessions = ViewBag.AvailableSessions as List<Software_Engineering_2025.Models.PressureSession>;
@@ -15,11 +18,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Patient Dashboard - Sensore</title>
     
-    <!-- External CSS -->
+    <!-- Link to External CSS in roots folder -->
     <link rel="stylesheet" href="~/css/patient-dashboard.css">
 </head>
 <body>
-    <!-- ===== SIDEBAR ===== -->
     <div class="sidebar">
         <div class="sidebar-icon" id="accountIcon" onclick="loadPanel('account')">
             👤
@@ -52,211 +54,219 @@
             </div>
         </div>
 
-   
-
- <!-- Date Selector -->
-    <div class="date-selector">
-        <label for="dateSelector">📅 View data from:</label>
-        <select id="dateSelector">
-            @foreach (var session in sessions)
-            {
-                var isSelected = session.Id == currentSession.Id;
-                <option value="@session.RecordedDate.ToString("yyyy-MM-dd")" selected="@isSelected">
-                    @session.RecordedDate.ToString("MMM dd, yyyy")
-                </option>
-            }
-        </select>
-    </div>
-
-  @if (sessions != null && sessions.Count > 0)
-{
-   
-    <div class="visualizations-row">
-        <div class="card visualization-card">
-            <div class="viz-header">
-                <div>
-                    <h3>🔥 Pressure Heat Map</h3>
-                    <p class="viz-subtitle">Current pressure distribution</p>
-                </div>
-            </div>
-           
-            <div class="heatmap-legend">
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #0066cc;"></div>
-                    <span>Low</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #00cc66;"></div>
-                    <span>Med</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #ffcc00;"></div>
-                    <span>High</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #ff6600;"></div>
-                    <span>V.High</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #cc0000;"></div>
-                    <span>Critical</span>
-                </div>
-            </div>
-           
-            <div class="heatmap-container">
-             <img src="/images/heatmap.png" style="width: 100%; border-radius: 6px;" />
-            </div>
-
-        <!-- GRAPH (Right Side) -->
-        <div class="card visualization-card">
-            <div class="viz-header">
-                <div>
-                    <h3>📈 Pressure Trends</h3>
-                    <p class="viz-subtitle">Track metrics over time</p>
-                </div>
-            </div>
-           
-            <div class="graph-controls">
-                <button class="graph-btn active" data-metric="peakPressure" onclick="showMetric('peakPressure')">
-                    Peak
-                </button>
-                <button class="graph-btn" data-metric="contactArea" onclick="showMetric('contactArea')">
-                    Contact
-                </button>
-                <button class="graph-btn" data-metric="riskScore" onclick="showMetric('riskScore')">
-                    Risk
-                </button>
-            </div>
-           
-            <div class="graph-container">
-                <canvas id="trendGraph" width="500" height="300"></canvas>
-            </div>
-        </div>
-    </div>
-
-   
-
-    <!-- BOTTOM ROW: Metrics Cards -->
-    <div class="metrics-grid">
-        <div class="card metric-card">
-            <div class="card-header">
-                <div class="card-title">PEAK PRESSURE</div>
-                <div class="info-icon">i
-                    <div class="tooltip">Highest pressure in areas of 10+ pixels</div>
-                </div>
-            </div>
-            <div class="metric-value" id="peakPressure">@metrics.PeakPressure <span>mmHg</span></div>
+        <!-- Date Selector -->
+        
+        <div class="date-selector">
+            <label for="dateSelector">📅 View data from:</label>
+            <select id="dateSelector">
+                @foreach (var session in sessions)
+                {
+                    var isSelected = session.Id == currentSession.Id;
+                    <option value="@session.RecordedDate.ToString("yyyy-MM-dd")" selected="@isSelected">
+                        @session.RecordedDate.ToString("MMM dd, yyyy")
+                    </option>
+                }
+            </select>
         </div>
 
-        <div class="card metric-card">
-            <div class="card-header">
-                <div class="card-title">CONTACT AREA</div>
-                <div class="info-icon">i
-                    <div class="tooltip">Percentage of sensor with pressure</div>
-                </div>
-            </div>
-            <div class="metric-value" id="contactArea">@metrics.ContactAreaPercent.ToString("F1")<span>%</span></div>
-        </div>
+        @if (sessions != null && sessions.Count > 0)
+        {
+            <!-- VISUALIZATIONS ROW -->
+            <! -- This legends and visualizations are contained in a flexbox row which adapts to screen size -->
+            
 
-        <div class="card metric-card">
-            <div class="card-header">
-                <div class="card-title">COEFFICIENT OF VARIATION</div>
-                <div class="info-icon">i
-                    <div class="tooltip">Pressure distribution evenness</div>
-                </div>
-            </div>
-            <div class="metric-value" id="coefficientVariation">@metrics.CoefficientOfVariation.ToString("F1")<span>%</span></div>
-        </div>
-
-        <div class="card metric-card">
-            <div class="card-header">
-                <div class="card-title">RISK SCORE</div>
-                <div class="info-icon">i
-                    <div class="tooltip">Overall pressure ulcer risk (1-10)</div>
-                </div>
-            </div>
-            <div class="metric-value" id="riskScore">@metrics.RiskScore<span>/10</span></div>
-        </div>
-    </div>
-}    
-
-    <div id="movementPlanNotification" class="movement-notification hidden">
-        <div class="notification-preview" onclick="expandMovementPlan()">
-            <div class="notification-icon">📋</div>
-            <div class="notification-text">
-                <div class="notification-title">Daily Movement Plan</div>
-                <div class="notification-subtitle">Time to check your reminders</div>
-            </div>
-            <div class="notification-expand">→</div>
-        </div>
-    </div>
-
-    <div id="movementPlanModal" class="movement-modal hidden">
-        <div class="modal-overlay" onclick="closeMovementPlan()"></div>
-        <div class="modal-content">
-            <div class="modal-header">
-                <div>
-                    <h2>📋 Daily Movement Plan</h2>
-                    <p>Stay active to prevent pressure ulcers</p>
-                </div>
-                <button class="modal-close" onclick="closeMovementPlan()">×</button>
-            </div>
-
-            <div class="modal-body">
-                <div class="movement-timer">
-                    <div style="font-size: 48px;">⏰</div>
-                    <div style="flex: 1;">
-                        <div style="font-size: 13px; opacity: 0.9;">Next Move In</div>
-                        <div class="timer-countdown" id="countdownTimer">24 mins</div>
-                        <div style="font-size: 12px; opacity: 0.8;">(Move every 30 mins)</div>
-                    </div>
-                </div>
-
-                <div class="action-items">
-                    <div class="action-item">
-                        <div class="action-checkbox">
-                            <input type="checkbox" id="getUp" onchange="markMovementDone(this)">
-                            <label for="getUp"><strong>Get Up and Move</strong></label>
+            <div class="visualizations-row">
+                <!-- HEATMAP  -->
+                <div class="card visualization-card">
+                    <div class="viz-header">
+                        <div>
+                            <h3>🔥 Pressure Heat Map</h3>
+                            <p class="viz-subtitle">Current pressure distribution</p>
                         </div>
-                        <div class="action-description">Stand up and walk for 2-3 minutes</div>
                     </div>
-
-                    <div class="action-item">
-                        <div class="action-checkbox">
-                            <input type="checkbox" id="shiftWeight" onchange="markMovementDone(this)">
-                            <label for="shiftWeight"><strong>Shift Your Weight</strong></label>
+                   
+                    <div class="heatmap-legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #0066cc;"></div>
+                            <span>Low</span>
                         </div>
-                        <div class="action-description">Lean to each side for 30 seconds</div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #00cc66;"></div>
+                            <span>Med</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ffcc00;"></div>
+                            <span>High</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ff6600;"></div>
+                            <span>V.High</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #cc0000;"></div>
+                            <span>Critical</span>
+                        </div>
                     </div>
-
-                    <div class="action-item">
-                        <div class="action-checkbox">
-                            <input type="checkbox" id="checkSkin" onchange="markMovementDone(this)">
-                            <label for="checkSkin"><strong>Check Your Skin</strong></label>
-                        </div>
-                        <div class="action-description">Look for red spots or pressure marks</div>
-                    </div>
-
-                    <div class="action-item">
-                        <div class="action-checkbox">
-                            <input type="checkbox" id="adjustPosition" onchange="markMovementDone(this)">
-                            <label for="adjustPosition"><strong>Adjust Your Position</strong></label>
-                        </div>
-                        <div class="action-description">Change sitting posture to relieve pressure</div>
+                    <!-- Heatmap Placeholder Image -->
+                    <div class="heatmap-container">
+                        <img src="/images/heatmap.png" style="width: 100%; border-radius: 6px;" />
+                        <canvas id="trendGraph" width="400" height="250"></canvas>
                     </div>
                 </div>
 
-                <div class="modal-actions">
-                    <button class="btn btn-secondary" onclick="remindLater()">
-                        ⏱️ Remind Me Later (15 mins)
-                    </button>
-                    <button class="btn btn-primary" onclick="markAllDone()">
-                        ✅ Mark All as Done
-                    </button>
+                <!-- GRAPH  -->
+                <div class="card visualization-card">
+                    <div class="viz-header">
+                        <div>
+                            <h3>📈 Pressure Trends</h3>
+                            <p class="viz-subtitle">Track metrics over time</p>
+                        </div>
+                    </div>
+
+                    <!-- Graph Metric Buttons -->
+                    <! -- Buttons to switch between different metrics on the graph -->
+                   
+                    <div class="graph-controls">
+                        <button class="graph-btn active" data-metric="peakPressure" onclick="showMetric('peakPressure')">
+                            Peak
+                        </button>
+                        <button class="graph-btn" data-metric="contactArea" onclick="showMetric('contactArea')">
+                            Contact
+                        </button>
+                        <button class="graph-btn" data-metric="riskScore" onclick="showMetric('riskScore')">
+                            Risk
+                        </button>
+                    </div>
+                   
+                    <div class="graph-container">
+                        <canvas id="trendGraph" width="500" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BOTTOM ROW: Metrics Cards -->
+            <div class="metrics-grid">
+                <div class="card metric-card">
+                    <div class="card-header">
+                        <div class="card-title">PEAK PRESSURE</div>
+                        <div class="info-icon">i
+                            <div class="tooltip">Highest pressure in areas of 10+ pixels</div>
+                        </div>
+                    </div>
+                    <div class="metric-value" id="peakPressure">@metrics.PeakPressure <span>mmHg</span></div>
+                </div>
+
+                <div class="card metric-card">
+                    <div class="card-header">
+                        <div class="card-title">CONTACT AREA</div>
+                        <div class="info-icon">i
+                            <div class="tooltip">Percentage of sensor with pressure</div>
+                        </div>
+                    </div>
+                    <div class="metric-value" id="contactArea">@metrics.ContactAreaPercent.ToString("F1")<span>%</span></div>
+                </div>
+
+                <div class="card metric-card">
+                    <div class="card-header">
+                        <div class="card-title">COEFFICIENT OF VARIATION</div>
+                        <div class="info-icon">i
+                            <div class="tooltip">Pressure distribution evenness</div>
+                        </div>
+                    </div>
+                    <div class="metric-value" id="coefficientVariation">@metrics.CoefficientOfVariation.ToString("F1")<span>%</span></div>
+                </div>
+
+                <div class="card metric-card">
+                    <div class="card-header">
+                        <div class="card-title">RISK SCORE</div>
+                        <div class="info-icon">i
+                            <div class="tooltip">Overall pressure ulcer risk (1-10)</div>
+                        </div>
+                    </div>
+                    <div class="metric-value" id="riskScore">@metrics.RiskScore<span>/10</span></div>
+                </div>
+            </div>
+        }    
+
+        <div id="movementPlanNotification" class="movement-notification hidden">
+            <div class="notification-preview" onclick="expandMovementPlan()">
+                <div class="notification-icon">📋</div>
+                <div class="notification-text">
+                    <div class="notification-title">Daily Movement Plan</div>
+                    <div class="notification-subtitle">Time to check your reminders</div>
+                </div>
+                <div class="notification-expand">→</div>
+            </div>
+        </div>
+
+        <div id="movementPlanModal" class="movement-modal hidden">
+            <div class="modal-overlay" onclick="closeMovementPlan()"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div>
+                        <h2>📋 Daily Movement Plan</h2>
+                        <p>Stay active to prevent pressure ulcers</p>
+                    </div>
+                    <button class="modal-close" onclick="closeMovementPlan()">×</button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="movement-timer">
+                        <div style="font-size: 48px;">⏰</div>
+                        <div style="flex: 1;">
+                            <div style="font-size: 13px; opacity: 0.9;">Next Move In</div>
+                            <div class="timer-countdown" id="countdownTimer">24 mins</div>
+                            <div style="font-size: 12px; opacity: 0.8;">(Move every 30 mins)</div>
+                        </div>
+                    </div>
+
+                    <div class="action-items">
+                        <div class="action-item">
+                            <div class="action-checkbox">
+                                <input type="checkbox" id="getUp" onchange="markMovementDone(this)">
+                                <label for="getUp"><strong>Get Up and Move</strong></label>
+                            </div>
+                            <div class="action-description">Stand up and walk for 2-3 minutes</div>
+                        </div>
+
+                        <div class="action-item">
+                            <div class="action-checkbox">
+                                <input type="checkbox" id="shiftWeight" onchange="markMovementDone(this)">
+                                <label for="shiftWeight"><strong>Shift Your Weight</strong></label>
+                            </div>
+                            <div class="action-description">Lean to each side for 30 seconds</div>
+                        </div>
+
+                        <div class="action-item">
+                            <div class="action-checkbox">
+                                <input type="checkbox" id="checkSkin" onchange="markMovementDone(this)">
+                                <label for="checkSkin"><strong>Check Your Skin</strong></label>
+                            </div>
+                            <div class="action-description">Look for red spots or pressure marks</div>
+                        </div>
+
+                        <div class="action-item">
+                            <div class="action-checkbox">
+                                <input type="checkbox" id="adjustPosition" onchange="markMovementDone(this)">
+                                <label for="adjustPosition"><strong>Adjust Your Position</strong></label>
+                            </div>
+                            <div class="action-description">Change sitting posture to relieve pressure</div>
+                        </div>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button class="btn btn-secondary" onclick="remindLater()">
+                            ⏱️ Remind Me Later (15 mins)
+                        </button>
+                        <button class="btn btn-primary" onclick="markAllDone()">
+                            ✅ Mark All as Done
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
     <!-- Data for JavaScript (Hidden JSON) -->
     @if (sessions != null && sessions.Count > 0)
     {
@@ -283,15 +293,16 @@
 }
 ]
         </script>
-    }
 
-    <!-- User ID -->
-    <script id="userIdData" type="application/json">
-    {"userId":"@Model.Id"}
-    </script>
+        <!-- User ID -->
+        <script id="userIdData" type="application/json">
+        {"userId":"@Model.Id"}
+        </script>
+    }
 
     <!-- External JavaScript -->
     <script src="~/js/patient-dashboard.js"></script>
 </body>
 </html>
+
   

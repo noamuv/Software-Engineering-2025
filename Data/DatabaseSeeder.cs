@@ -15,8 +15,6 @@ namespace Software_Engineering_2025.Data
             // This prevents duplicate entries on multiple runs
             if (context.AppUsers.Any())
                 return;
-
-
             // Create initial users with temporary passwords
             var users = new[]
             {
